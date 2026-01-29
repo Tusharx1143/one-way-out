@@ -20,6 +20,7 @@ export async function saveUserProfile(userId, data) {
       ...data,
       updatedAt: serverTimestamp(),
     }, { merge: true });
+    console.log('Profile saved for', userId);
     return true;
   } catch (err) {
     console.error('Error saving user profile:', err);
@@ -47,7 +48,6 @@ export async function submitScore(userId, userData) {
   try {
     const { displayName, photoURL, level, wpm, maxCombo, difficulty } = userData;
     
-    // Save to main leaderboard
     const leaderboardRef = doc(db, 'leaderboard', `${difficulty}_${userId}`);
     
     // Get existing score
@@ -66,6 +66,7 @@ export async function submitScore(userId, userData) {
         userId,
         updatedAt: serverTimestamp(),
       });
+      console.log('Score submitted:', level, 'for difficulty:', difficulty);
     }
     
     return true;
@@ -75,25 +76,52 @@ export async function submitScore(userId, userData) {
   }
 }
 
-// Get leaderboard
+// Get leaderboard - simplified query to avoid index issues
 export async function getLeaderboard(difficulty = 'normal', maxResults = 50) {
   try {
     const leaderboardRef = collection(db, 'leaderboard');
-    const q = query(
-      leaderboardRef,
-      where('difficulty', '==', difficulty),
-      orderBy('level', 'desc'),
-      orderBy('wpm', 'desc'),
-      limit(maxResults)
-    );
     
-    const snapshot = await getDocs(q);
-    const results = [];
-    snapshot.forEach((doc) => {
-      results.push({ id: doc.id, ...doc.data() });
-    });
-    
-    return results;
+    // Try with full query first
+    try {
+      const q = query(
+        leaderboardRef,
+        where('difficulty', '==', difficulty),
+        orderBy('level', 'desc'),
+        orderBy('wpm', 'desc'),
+        limit(maxResults)
+      );
+      
+      const snapshot = await getDocs(q);
+      const results = [];
+      snapshot.forEach((doc) => {
+        results.push({ id: doc.id, ...doc.data() });
+      });
+      
+      console.log('Leaderboard loaded:', results.length, 'scores');
+      return results;
+    } catch (indexError) {
+      // Fallback: simpler query if index not ready
+      console.log('Index not ready, using fallback query');
+      const q = query(
+        leaderboardRef,
+        where('difficulty', '==', difficulty),
+        limit(maxResults)
+      );
+      
+      const snapshot = await getDocs(q);
+      const results = [];
+      snapshot.forEach((doc) => {
+        results.push({ id: doc.id, ...doc.data() });
+      });
+      
+      // Sort in memory
+      results.sort((a, b) => {
+        if (b.level !== a.level) return b.level - a.level;
+        return b.wpm - a.wpm;
+      });
+      
+      return results;
+    }
   } catch (err) {
     console.error('Error getting leaderboard:', err);
     return [];
@@ -107,11 +135,9 @@ export async function submitDailyScore(userId, userData, dailyId) {
     
     const dailyRef = doc(db, 'daily', `${dailyId}_${userId}`);
     
-    // Get existing score
     const existing = await getDoc(dailyRef);
     const existingLevel = existing.exists() ? existing.data().level : 0;
     
-    // Only update if new score is higher
     if (level > existingLevel) {
       await setDoc(dailyRef, {
         displayName: displayName || 'Anonymous',
@@ -123,6 +149,7 @@ export async function submitDailyScore(userId, userData, dailyId) {
         userId,
         updatedAt: serverTimestamp(),
       });
+      console.log('Daily score submitted:', level);
     }
     
     return true;
@@ -136,21 +163,44 @@ export async function submitDailyScore(userId, userData, dailyId) {
 export async function getDailyLeaderboard(dailyId, maxResults = 50) {
   try {
     const dailyRef = collection(db, 'daily');
-    const q = query(
-      dailyRef,
-      where('dailyId', '==', dailyId),
-      orderBy('level', 'desc'),
-      orderBy('wpm', 'desc'),
-      limit(maxResults)
-    );
     
-    const snapshot = await getDocs(q);
-    const results = [];
-    snapshot.forEach((doc) => {
-      results.push({ id: doc.id, ...doc.data() });
-    });
-    
-    return results;
+    try {
+      const q = query(
+        dailyRef,
+        where('dailyId', '==', dailyId),
+        orderBy('level', 'desc'),
+        orderBy('wpm', 'desc'),
+        limit(maxResults)
+      );
+      
+      const snapshot = await getDocs(q);
+      const results = [];
+      snapshot.forEach((doc) => {
+        results.push({ id: doc.id, ...doc.data() });
+      });
+      
+      return results;
+    } catch (indexError) {
+      // Fallback
+      const q = query(
+        dailyRef,
+        where('dailyId', '==', dailyId),
+        limit(maxResults)
+      );
+      
+      const snapshot = await getDocs(q);
+      const results = [];
+      snapshot.forEach((doc) => {
+        results.push({ id: doc.id, ...doc.data() });
+      });
+      
+      results.sort((a, b) => {
+        if (b.level !== a.level) return b.level - a.level;
+        return b.wpm - a.wpm;
+      });
+      
+      return results;
+    }
   } catch (err) {
     console.error('Error getting daily leaderboard:', err);
     return [];
