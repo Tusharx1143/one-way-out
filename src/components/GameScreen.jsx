@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SentenceDisplay } from './SentenceDisplay';
 import { StatsBar } from './StatsBar';
 import { VirtualKeyboard } from './VirtualKeyboard';
+import { Creature } from './Creature';
 
 export function GameScreen({ 
   level, 
@@ -17,6 +18,7 @@ export function GameScreen({
   combo,
   wpm,
   difficulty,
+  isGameOver,
   onType 
 }) {
   const inputRef = useRef(null);
@@ -33,13 +35,13 @@ export function GameScreen({
   }, []);
 
   useEffect(() => {
-    if (!isMobile) {
+    if (!isMobile && !isGameOver) {
       inputRef.current?.focus();
     }
-  }, [isMobile]);
+  }, [isMobile, isGameOver]);
 
   const handleClick = () => {
-    if (!isMobile) {
+    if (!isMobile && !isGameOver) {
       inputRef.current?.focus();
     }
   };
@@ -53,8 +55,8 @@ export function GameScreen({
   };
 
   // Visual decay based on mistakes
-  const decayOpacity = 1 - (mistakes * 0.08);
-  const decayFilter = mistakes > 2 ? `blur(${(mistakes - 2) * 0.3}px)` : 'none';
+  const decayOpacity = 1 - (mistakes * 0.06);
+  const decayFilter = mistakes > 2 ? `blur(${(mistakes - 2) * 0.2}px)` : 'none';
 
   // Next expected character for keyboard highlighting
   const nextChar = sentence[typed.length] || '';
@@ -65,9 +67,16 @@ export function GameScreen({
       onClick={handleClick}
       style={{ 
         opacity: decayOpacity,
-        filter: decayFilter,
+        filter: isGameOver ? 'none' : decayFilter,
       }}
     >
+      {/* Creature approaching */}
+      <Creature 
+        mistakes={mistakes} 
+        maxMistakes={maxMistakes} 
+        isGameOver={isGameOver}
+      />
+
       {/* Hidden input for desktop keyboard */}
       {!isMobile && (
         <input
@@ -84,26 +93,28 @@ export function GameScreen({
         />
       )}
 
-      <StatsBar 
-        level={level} 
-        mistakes={mistakes} 
-        maxMistakes={maxMistakes}
-        bestScore={bestScore}
-        timeLeft={timeLeft}
-        maxTime={maxTime}
-        combo={combo}
-        wpm={wpm}
-        difficulty={difficulty}
-      />
+      <div className="relative z-20">
+        <StatsBar 
+          level={level} 
+          mistakes={mistakes} 
+          maxMistakes={maxMistakes}
+          bestScore={bestScore}
+          timeLeft={timeLeft}
+          maxTime={maxTime}
+          combo={combo}
+          wpm={wpm}
+          difficulty={difficulty}
+        />
+      </div>
 
-      <div className={`flex-1 flex items-center justify-center ${isShaking ? 'shake' : ''}`}>
+      <div className={`flex-1 flex items-center justify-center relative z-20 ${isShaking ? 'shake' : ''}`}>
         <div className="max-w-4xl px-2">
           <SentenceDisplay sentence={sentence} typed={typed} />
         </div>
       </div>
 
       {!isMobile && (
-        <div className="text-center text-[var(--color-bone)]/20 text-sm">
+        <div className="text-center text-[var(--color-bone)]/20 text-sm relative z-20">
           just type
         </div>
       )}

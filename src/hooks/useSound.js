@@ -1,39 +1,47 @@
 import { useCallback, useRef, useEffect } from 'react';
 
-// Create audio context lazily (browsers require user interaction first)
 let audioContext = null;
 
 function getAudioContext() {
   if (!audioContext) {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
   }
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
   return audioContext;
 }
 
-// Generate sounds programmatically (no external files needed)
-function playTone(frequency, duration, type = 'square', volume = 0.1) {
+// Low rumble/drone
+function playDrone(frequency, duration, volume = 0.1) {
   try {
     const ctx = getAudioContext();
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
     
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(frequency * 0.8, ctx.currentTime + duration);
     
-    gainNode.gain.setValueAtTime(volume, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(200, ctx.currentTime);
     
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.1);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
     
-    oscillator.start(ctx.currentTime);
-    oscillator.stop(ctx.currentTime + duration);
-  } catch (e) {
-    // Audio not supported or blocked
-  }
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) {}
 }
 
-function playNoise(duration, volume = 0.1) {
+// Creepy whisper-like noise
+function playWhisper(duration, volume = 0.05) {
   try {
     const ctx = getAudioContext();
     const bufferSize = ctx.sampleRate * duration;
@@ -41,75 +49,249 @@ function playNoise(duration, volume = 0.1) {
     const data = buffer.getChannelData(0);
     
     for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
+      // Modulated noise for whisper effect
+      const mod = Math.sin(i / 500) * 0.5 + 0.5;
+      data[i] = (Math.random() * 2 - 1) * mod;
     }
     
     const noise = ctx.createBufferSource();
-    const gainNode = ctx.createGain();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
     
     noise.buffer = buffer;
-    gainNode.gain.setValueAtTime(volume, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(800, ctx.currentTime);
+    filter.Q.setValueAtTime(2, ctx.currentTime);
     
-    noise.connect(gainNode);
-    gainNode.connect(ctx.destination);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.1);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
     
     noise.start();
-  } catch (e) {
-    // Audio not supported
-  }
+  } catch (e) {}
+}
+
+// Distorted screech
+function playScreech(volume = 0.15) {
+  try {
+    const ctx = getAudioContext();
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const distortion = ctx.createWaveShaper();
+    
+    // Create distortion curve
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      const x = (i / 128) - 1;
+      curve[i] = Math.tanh(x * 5);
+    }
+    distortion.curve = curve;
+    
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(300, ctx.currentTime);
+    osc1.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.3);
+    
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(150, ctx.currentTime);
+    osc2.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.3);
+    
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    
+    osc1.connect(distortion);
+    osc2.connect(distortion);
+    distortion.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + 0.4);
+    osc2.stop(ctx.currentTime + 0.4);
+  } catch (e) {}
+}
+
+// Deep impact/thud
+function playImpact(volume = 0.2) {
+  try {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(80, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.2);
+    
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  } catch (e) {}
+}
+
+// Death sound - long terrifying sequence
+function playDeath() {
+  try {
+    const ctx = getAudioContext();
+    
+    // Deep rumble
+    const rumble = ctx.createOscillator();
+    const rumbleGain = ctx.createGain();
+    rumble.type = 'sawtooth';
+    rumble.frequency.setValueAtTime(40, ctx.currentTime);
+    rumble.frequency.linearRampToValueAtTime(20, ctx.currentTime + 2);
+    rumbleGain.gain.setValueAtTime(0.3, ctx.currentTime);
+    rumbleGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+    rumble.connect(rumbleGain);
+    rumbleGain.connect(ctx.destination);
+    rumble.start();
+    rumble.stop(ctx.currentTime + 2);
+    
+    // Screech
+    setTimeout(() => playScreech(0.25), 100);
+    setTimeout(() => playScreech(0.2), 400);
+    
+    // Whispers
+    setTimeout(() => playWhisper(1.5, 0.1), 200);
+    
+    // Final impact
+    setTimeout(() => playImpact(0.3), 800);
+    
+  } catch (e) {}
 }
 
 export function useSound() {
   const heartbeatRef = useRef(null);
-  const heartbeatSpeed = useRef(1000);
+  const heartbeatSpeed = useRef(1200);
+  const ambienceRef = useRef(null);
 
-  // Keystroke sound - subtle click
+  // Subtle key click - softer, creepier
   const playKeystroke = useCallback(() => {
-    playTone(800 + Math.random() * 200, 0.05, 'square', 0.03);
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(100 + Math.random() * 50, ctx.currentTime);
+      
+      gain.gain.setValueAtTime(0.02, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.05);
+    } catch (e) {}
   }, []);
 
-  // Error sound - harsh buzz
+  // Error - creature approaches with screech
   const playError = useCallback(() => {
-    playNoise(0.15, 0.2);
-    playTone(150, 0.15, 'sawtooth', 0.15);
+    playScreech(0.12);
+    playImpact(0.15);
+    playWhisper(0.5, 0.08);
   }, []);
 
-  // Success sound - gentle chime
+  // Success - brief relief, but still tense
   const playSuccess = useCallback(() => {
-    playTone(523, 0.1, 'sine', 0.08); // C5
-    setTimeout(() => playTone(659, 0.1, 'sine', 0.08), 50); // E5
-    setTimeout(() => playTone(784, 0.15, 'sine', 0.08), 100); // G5
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(330, ctx.currentTime + 0.1);
+      
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    } catch (e) {}
   }, []);
 
-  // Game over sound - descending doom
+  // Game over - full horror
   const playGameOver = useCallback(() => {
-    playTone(400, 0.3, 'sawtooth', 0.15);
-    setTimeout(() => playTone(300, 0.3, 'sawtooth', 0.15), 200);
-    setTimeout(() => playTone(200, 0.5, 'sawtooth', 0.2), 400);
-    setTimeout(() => playNoise(0.5, 0.15), 600);
+    playDeath();
   }, []);
 
-  // Tick sound for timer
+  // Soft tick
   const playTick = useCallback(() => {
-    playTone(1000, 0.02, 'square', 0.02);
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(60, ctx.currentTime);
+      
+      gain.gain.setValueAtTime(0.01, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.02);
+    } catch (e) {}
   }, []);
 
-  // Warning tick (when time is low)
+  // Warning tick - deeper, more urgent
   const playWarningTick = useCallback(() => {
-    playTone(200, 0.1, 'square', 0.1);
+    playDrone(50, 0.15, 0.08);
   }, []);
 
-  // Heartbeat - gets faster with more mistakes
+  // Heartbeat - organic, terrifying
   const startHeartbeat = useCallback((mistakes) => {
-    // Speed up based on mistakes: 1000ms -> 400ms
-    heartbeatSpeed.current = Math.max(400, 1000 - (mistakes * 150));
+    heartbeatSpeed.current = Math.max(400, 1200 - (mistakes * 200));
     
-    if (heartbeatRef.current) return; // Already running
+    if (heartbeatRef.current) return;
     
     const beat = () => {
-      playTone(60, 0.1, 'sine', 0.1);
-      setTimeout(() => playTone(50, 0.15, 'sine', 0.08), 100);
+      // Two-part heartbeat (lub-dub)
+      try {
+        const ctx = getAudioContext();
+        
+        // Lub
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(40, ctx.currentTime);
+        gain1.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start();
+        osc1.stop(ctx.currentTime + 0.1);
+        
+        // Dub (slightly delayed)
+        setTimeout(() => {
+          const ctx = getAudioContext();
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(35, ctx.currentTime);
+          gain2.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.12);
+        }, 100);
+      } catch (e) {}
       
       heartbeatRef.current = setTimeout(beat, heartbeatSpeed.current);
     };
@@ -117,7 +299,11 @@ export function useSound() {
   }, []);
 
   const updateHeartbeat = useCallback((mistakes) => {
-    heartbeatSpeed.current = Math.max(400, 1000 - (mistakes * 150));
+    heartbeatSpeed.current = Math.max(400, 1200 - (mistakes * 200));
+    // Add whisper on each mistake
+    if (mistakes > 0) {
+      playWhisper(0.8, 0.05 + mistakes * 0.02);
+    }
   }, []);
 
   const stopHeartbeat = useCallback(() => {
@@ -127,7 +313,6 @@ export function useSound() {
     }
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => stopHeartbeat();
   }, [stopHeartbeat]);
