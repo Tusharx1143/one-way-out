@@ -1,6 +1,6 @@
 export function SentenceDisplay({ sentence, typed }) {
   return (
-    <div className="text-2xl md:text-4xl leading-relaxed tracking-wide select-none">
+    <div className="text-xl md:text-4xl leading-relaxed md:leading-relaxed tracking-wide select-none">
       {sentence.split('').map((char, index) => {
         let className = 'transition-colors duration-100 ';
         
@@ -9,7 +9,7 @@ export function SentenceDisplay({ sentence, typed }) {
           className += 'text-green-400';
         } else if (index === typed.length) {
           // Current character - highlighted
-          className += 'text-[var(--color-bone)] bg-[var(--color-bone)]/20 cursor-blink';
+          className += 'text-[var(--color-bone)] bg-[var(--color-bone)]/20 cursor-blink px-0.5 rounded';
         } else {
           // Not yet typed - dim
           className += 'text-[var(--color-bone)]/40';

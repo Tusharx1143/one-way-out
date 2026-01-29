@@ -10,6 +10,7 @@ function App() {
   
   const {
     gameState,
+    difficulty,
     level,
     totalMistakes,
     maxMistakes,
@@ -19,6 +20,9 @@ function App() {
     isFlashing,
     timeLeft,
     maxTime,
+    combo,
+    maxCombo,
+    wpm,
     bestScore,
     handleType,
     startGame,
@@ -28,12 +32,22 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (gameState === 'gameover' && e.key === 'Enter') {
-        startGame();
+        startGame(difficulty);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameState, startGame]);
+  }, [gameState, difficulty, startGame]);
+
+  // Handle restart - null difficulty means go back to menu
+  const handleRestart = (selectedDifficulty) => {
+    if (selectedDifficulty === null) {
+      // Go back to start screen by refreshing state
+      window.location.reload();
+    } else {
+      startGame(selectedDifficulty);
+    }
+  };
 
   if (gameState === 'idle') {
     return <StartScreen onStart={startGame} />;
@@ -44,7 +58,10 @@ function App() {
       <GameOverScreen 
         level={level} 
         bestScore={bestScore}
-        onRestart={startGame} 
+        maxCombo={maxCombo}
+        wpm={wpm}
+        difficulty={difficulty}
+        onRestart={handleRestart} 
       />
     );
   }
@@ -61,6 +78,9 @@ function App() {
       isFlashing={isFlashing}
       timeLeft={timeLeft}
       maxTime={maxTime}
+      combo={combo}
+      wpm={wpm}
+      difficulty={difficulty}
       onType={handleType}
     />
   );
