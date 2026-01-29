@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGame } from './hooks/useGame';
 import { useSound } from './hooks/useSound';
 import { useStats } from './hooks/useStats';
+import { useAuth } from './hooks/useAuth';
 import { StartScreen } from './components/StartScreen';
 import { GameScreen } from './components/GameScreen';
 import { GameOverScreen } from './components/GameOverScreen';
@@ -9,7 +10,8 @@ import { AchievementPopup } from './components/AchievementPopup';
 
 function App() {
   const sound = useSound();
-  const { stats, newAchievements, recordGame, clearNewAchievements } = useStats();
+  const { user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
+  const { stats, newAchievements, recordGame, clearNewAchievements } = useStats(user);
   const [showDeathScreen, setShowDeathScreen] = useState(false);
   const [gameRecorded, setGameRecorded] = useState(false);
   
@@ -45,12 +47,13 @@ function App() {
         maxCombo,
         difficulty,
         perfectStreak,
+        gameMode,
       });
       setGameRecorded(true);
     } else if (gameState === 'playing') {
       setGameRecorded(false);
     }
-  }, [gameState, gameRecorded, recordGame, level, wpm, maxCombo, difficulty, perfectStreak]);
+  }, [gameState, gameRecorded, recordGame, level, wpm, maxCombo, difficulty, perfectStreak, gameMode]);
 
   // Delay showing game over screen for death animation
   useEffect(() => {
@@ -91,6 +94,10 @@ function App() {
           onStart={startGame} 
           onStartDaily={startDailyChallenge}
           stats={stats}
+          user={user}
+          onSignIn={signInWithGoogle}
+          onSignOut={signOut}
+          authLoading={authLoading}
         />
         <AchievementPopup 
           achievements={newAchievements} 
@@ -132,7 +139,8 @@ function App() {
           wpm={wpm}
           difficulty={difficulty}
           gameMode={gameMode}
-          onRestart={handleRestart} 
+          onRestart={handleRestart}
+          user={user}
         />
         <AchievementPopup 
           achievements={newAchievements} 

@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { DIFFICULTIES } from '../config/difficulty';
 import { hasDailyBeenPlayed, getDailyBest, getTimeUntilNextDaily } from '../config/dailyChallenge';
+import { AuthButton } from './AuthButton';
+import { Leaderboard } from './Leaderboard';
+import { ACHIEVEMENTS } from '../config/achievements';
 
-export function StartScreen({ onStart, onStartDaily, stats }) {
+export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSignOut, authLoading }) {
   const [selectedDifficulty, setSelectedDifficulty] = useState('normal');
   const [flicker, setFlicker] = useState(false);
   const [ready, setReady] = useState(false);
-  const [showMode, setShowMode] = useState('main'); // main, difficulty, stats
+  const [showMode, setShowMode] = useState('main');
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   const dailyPlayed = hasDailyBeenPlayed();
   const dailyBest = getDailyBest();
@@ -20,6 +24,8 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
     if (!ready) return;
     
     const handleKey = (e) => {
+      if (showLeaderboard) return;
+      
       if (showMode === 'difficulty') {
         if (e.key === 'Enter' || e.key === ' ') {
           onStart(selectedDifficulty);
@@ -39,9 +45,8 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
     
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onStart, selectedDifficulty, ready, showMode]);
+  }, [onStart, selectedDifficulty, ready, showMode, showLeaderboard]);
 
-  // Flicker effect
   useEffect(() => {
     const interval = setInterval(() => {
       setFlicker(true);
@@ -52,6 +57,16 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
 
   return (
     <div className={`min-h-screen flex flex-col items-center justify-center p-8 transition-opacity duration-100 ${flicker ? 'opacity-70' : 'opacity-100'}`}>
+      {/* Auth button in top right */}
+      <div className="absolute top-4 right-4">
+        <AuthButton 
+          user={user} 
+          onSignIn={onSignIn} 
+          onSignOut={onSignOut}
+          loading={authLoading}
+        />
+      </div>
+
       <h1 className="text-4xl md:text-8xl font-bold tracking-[0.2em] md:tracking-[0.3em] mb-4 text-[var(--color-bone)]">
         ONE WAY OUT
       </h1>
@@ -62,7 +77,6 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
 
       {showMode === 'main' && (
         <div className="flex flex-col gap-4 w-full max-w-xs">
-          {/* Play button */}
           <button
             onClick={() => setShowMode('difficulty')}
             className="py-4 px-8 border-2 border-[var(--color-bone)] text-[var(--color-bone)] hover:bg-[var(--color-bone)] hover:text-[var(--color-void)] transition-all font-bold tracking-wider text-lg"
@@ -70,7 +84,6 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
             PLAY
           </button>
 
-          {/* Daily Challenge */}
           <button
             onClick={() => !dailyPlayed && onStartDaily()}
             disabled={dailyPlayed}
@@ -92,7 +105,14 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
             )}
           </button>
 
-          {/* Stats */}
+          {/* Leaderboard button */}
+          <button
+            onClick={() => setShowLeaderboard(true)}
+            className="py-3 px-8 border border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10 transition-all text-sm tracking-wider"
+          >
+            🏆 LEADERBOARD
+          </button>
+
           {stats && stats.totalGames > 0 && (
             <button
               onClick={() => setShowMode('stats')}
@@ -168,7 +188,7 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
             {stats.unlockedAchievements?.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {stats.unlockedAchievements.map(id => {
-                  const achievement = require('../config/achievements').ACHIEVEMENTS[id];
+                  const achievement = ACHIEVEMENTS[id];
                   return achievement ? (
                     <div 
                       key={id} 
@@ -199,7 +219,16 @@ export function StartScreen({ onStart, onStartDaily, stats }) {
       {showMode === 'main' && (
         <div className="absolute bottom-8 text-[var(--color-bone)]/20 text-xs text-center">
           <div>type fast • survive long • don't die</div>
+          {!user && <div className="mt-2">Sign in to save progress & compete on leaderboard</div>}
         </div>
+      )}
+
+      {/* Leaderboard modal */}
+      {showLeaderboard && (
+        <Leaderboard 
+          onClose={() => setShowLeaderboard(false)}
+          currentUserId={user?.uid}
+        />
       )}
     </div>
   );
