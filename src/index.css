@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --color-blood: #8b0000;
+  --color-blood-bright: #dc143c;
+  --color-bone: #f5f5dc;
+  --color-void: #0a0a0a;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-bone);
+  font-family: var(--font-mono);
+}
+
+/* Flicker animation for tension */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.cursor-blink {
+  animation: flicker 1s infinite;
+}
+
+/* Screen shake on mistake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.15s ease-in-out;
+}
+
+/* Red flash overlay */
+@keyframes flash-red {
+  0% { background-color: rgba(139, 0, 0, 0.4); }
+  100% { background-color: transparent; }
+}
+
+.flash-mistake {
+  animation: flash-red 0.2s ease-out;
+}
