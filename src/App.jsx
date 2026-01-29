@@ -1,10 +1,15 @@
 import { useEffect } from 'react';
 import { useGame } from './hooks/useGame';
+import { useSound } from './hooks/useSound';
+import { StartScreen } from './components/StartScreen';
 import { GameScreen } from './components/GameScreen';
 import { GameOverScreen } from './components/GameOverScreen';
 
 function App() {
+  const sound = useSound();
+  
   const {
+    gameState,
     level,
     totalMistakes,
     maxMistakes,
@@ -12,24 +17,29 @@ function App() {
     typed,
     isShaking,
     isFlashing,
-    gameOver,
+    timeLeft,
+    maxTime,
     bestScore,
     handleType,
     startGame,
-  } = useGame();
+  } = useGame(sound);
 
   // Handle Enter to restart when game over
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (gameOver && e.key === 'Enter') {
+      if (gameState === 'gameover' && e.key === 'Enter') {
         startGame();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameOver, startGame]);
+  }, [gameState, startGame]);
 
-  if (gameOver) {
+  if (gameState === 'idle') {
+    return <StartScreen onStart={startGame} />;
+  }
+
+  if (gameState === 'gameover') {
     return (
       <GameOverScreen 
         level={level} 
@@ -49,6 +59,8 @@ function App() {
       typed={typed}
       isShaking={isShaking}
       isFlashing={isFlashing}
+      timeLeft={timeLeft}
+      maxTime={maxTime}
       onType={handleType}
     />
   );
