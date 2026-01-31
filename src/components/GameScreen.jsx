@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SentenceDisplay } from './SentenceDisplay';
 import { StatsBar } from './StatsBar';
 import { Creature } from './Creature';
+import { PowerUpsUI } from './PowerUpsUI';
 
 export function GameScreen({ 
   level, 
@@ -18,7 +19,12 @@ export function GameScreen({
   wpm,
   difficulty,
   isGameOver,
-  onType 
+  onType,
+  streakMultiplier,
+  timeSurvived,
+  gameMode,
+  activePowerUps,
+  currentLevelPowerUp,
 }) {
   const inputRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -102,7 +108,7 @@ export function GameScreen({
         enterKeyHint="next"
       />
 
-      <div className="relative z-20">
+      <div className="relative z-20 space-y-3">
         <StatsBar 
           level={level} 
           mistakes={mistakes} 
@@ -113,6 +119,13 @@ export function GameScreen({
           combo={combo}
           wpm={wpm}
           difficulty={difficulty}
+          streakMultiplier={streakMultiplier}
+          timeSurvived={timeSurvived}
+          gameMode={gameMode}
+        />
+        <PowerUpsUI 
+          activePowerUps={activePowerUps}
+          currentLevelPowerUp={currentLevelPowerUp}
         />
       </div>
 

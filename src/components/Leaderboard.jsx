@@ -4,6 +4,7 @@ import { getDailyChallengeId } from '../config/dailyChallenge';
 
 export function Leaderboard({ onClose, currentUserId }) {
   const [tab, setTab] = useState('normal'); // normal, nightmare, daily
+  const [timeFilter, setTimeFilter] = useState('global'); // global, daily, weekly, monthly
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +17,7 @@ export function Leaderboard({ onClose, currentUserId }) {
         const dailyId = getDailyChallengeId();
         results = await getDailyLeaderboard(dailyId);
       } else {
-        results = await getLeaderboard(tab);
+        results = await getLeaderboard(tab, 50, timeFilter);
       }
       
       setScores(results);
@@ -24,7 +25,7 @@ export function Leaderboard({ onClose, currentUserId }) {
     }
     
     fetchScores();
-  }, [tab]);
+  }, [tab, timeFilter]);
 
   return (
     <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -37,12 +38,15 @@ export function Leaderboard({ onClose, currentUserId }) {
           <h2 className="text-xl font-bold text-[var(--color-bone)] text-center">🏆 Leaderboard</h2>
         </div>
 
-        {/* Tabs */}
+        {/* Difficulty Tabs */}
         <div className="flex border-b border-[var(--color-bone)]/10">
           {['normal', 'nightmare', 'daily'].map((t) => (
             <button
               key={t}
-              onClick={() => setTab(t)}
+              onClick={() => {
+                setTab(t);
+                if (t !== 'daily') setTimeFilter('global');
+              }}
               className={`flex-1 py-3 text-sm font-medium transition-colors ${
                 tab === t
                   ? 'text-[var(--color-bone)] border-b-2 border-[var(--color-bone)]'
@@ -53,6 +57,25 @@ export function Leaderboard({ onClose, currentUserId }) {
             </button>
           ))}
         </div>
+
+        {/* Time Filter Tabs */}
+        {tab !== 'daily' && (
+          <div className="flex border-b border-[var(--color-bone)]/10 text-xs">
+            {['global', 'monthly', 'weekly', 'daily'].map((tf) => (
+              <button
+                key={tf}
+                onClick={() => setTimeFilter(tf)}
+                className={`flex-1 py-2 font-medium transition-colors ${
+                  timeFilter === tf
+                    ? 'text-yellow-400 border-b-2 border-yellow-400'
+                    : 'text-[var(--color-bone)]/40 hover:text-[var(--color-bone)]/60'
+                }`}
+              >
+                {tf === 'global' ? 'All Time' : tf.charAt(0).toUpperCase() + tf.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Scores */}
         <div className="overflow-y-auto max-h-[50vh] p-2">

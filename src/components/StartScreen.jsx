@@ -7,7 +7,7 @@ import { PracticeMode } from './PracticeMode';
 import { StatsDialog } from './StatsDialog';
 import { ACHIEVEMENTS } from '../config/achievements';
 
-export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSignOut, authLoading }) {
+export function StartScreen({ onStart, onStartDaily, onStartSurvival, stats, user, onSignIn, onSignOut, authLoading, selectedTheme, onThemeChange }) {
   const [selectedDifficulty, setSelectedDifficulty] = useState('normal');
   const [flicker, setFlicker] = useState(false);
   const [ready, setReady] = useState(false);
@@ -15,6 +15,7 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showPractice, setShowPractice] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [selectedSurvivalDifficulty, setSelectedSurvivalDifficulty] = useState('normal');
 
   const dailyPlayed = hasDailyBeenPlayed();
   const dailyBest = getDailyBest();
@@ -89,6 +90,13 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
           </button>
 
           <button
+            onClick={() => setShowMode('survival')}
+            className="py-4 px-8 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-[var(--color-void)] transition-all font-bold tracking-wider text-lg"
+          >
+            🔥 SURVIVAL MODE
+          </button>
+
+          <button
             onClick={() => !dailyPlayed && onStartDaily()}
             disabled={dailyPlayed}
             className={`py-4 px-8 border-2 transition-all font-bold tracking-wider ${
@@ -149,6 +157,44 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
                 className={`px-6 py-4 border-2 transition-all duration-200 min-w-[140px] ${
                   selectedDifficulty === diff.id
                     ? `border-[var(--color-bone)] ${diff.color} scale-105`
+                    : 'border-[var(--color-bone)]/20 text-[var(--color-bone)]/40 hover:border-[var(--color-bone)]/40'
+                }`}
+              >
+                <div className="font-bold tracking-wider">{diff.name}</div>
+                <div className="text-xs mt-1 opacity-60">{diff.maxMistakes} lives</div>
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setShowMode('main')}
+            className="text-[var(--color-bone)]/40 hover:text-[var(--color-bone)]/60 text-sm"
+          >
+            ← Back
+          </button>
+        </>
+      )}
+
+      {showMode === 'survival' && (
+        <>
+          <div className="mb-6 text-center">
+            <h2 className="text-2xl text-red-500 font-bold mb-2">SURVIVAL MODE</h2>
+            <p className="text-[var(--color-bone)]/50 text-sm">
+              Timer never resets. How long can you survive?
+            </p>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            {Object.values(DIFFICULTIES).map((diff) => (
+              <button
+                key={diff.id}
+                onClick={() => {
+                  setSelectedSurvivalDifficulty(diff.id);
+                  if (ready) onStartSurvival(diff.id);
+                }}
+                className={`px-6 py-4 border-2 transition-all duration-200 min-w-[140px] ${
+                  selectedSurvivalDifficulty === diff.id
+                    ? `border-red-500 text-red-500 scale-105`
                     : 'border-[var(--color-bone)]/20 text-[var(--color-bone)]/40 hover:border-[var(--color-bone)]/40'
                 }`}
               >
@@ -260,6 +306,8 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
           stats={stats}
           user={user}
           onClose={() => setShowStats(false)}
+          selectedTheme={selectedTheme}
+          onThemeChange={onThemeChange}
         />
       )}
     </div>

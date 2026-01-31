@@ -110,22 +110,49 @@ export async function submitScore(userId, userData) {
   }
 }
 
-// Get leaderboard - simplified query to avoid index issues
-export async function getLeaderboard(difficulty = 'normal', maxResults = 50) {
+// Get leaderboard with optional time filter
+export async function getLeaderboard(difficulty = 'normal', maxResults = 50, timeFilter = 'global') {
   try {
-    console.log('🏆 Fetching leaderboard for difficulty:', difficulty);
+    console.log('🏆 Fetching leaderboard for difficulty:', difficulty, 'timeFilter:', timeFilter);
     
     const leaderboardRef = collection(db, 'leaderboard');
     
+    // Calculate time threshold based on filter
+    let timeThreshold = null;
+    if (timeFilter !== 'global') {
+      const now = new Date();
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      
+      switch (timeFilter) {
+        case 'daily':
+          timeThreshold = new Date(now.getTime() - millisecondsPerDay);
+          break;
+        case 'weekly':
+          timeThreshold = new Date(now.getTime() - 7 * millisecondsPerDay);
+          break;
+        case 'monthly':
+          timeThreshold = new Date(now.getTime() - 30 * millisecondsPerDay);
+          break;
+        default:
+          break;
+      }
+    }
+    
     // Try with full query first
     try {
-      const q = query(
-        leaderboardRef,
+      const constraints = [
         where('difficulty', '==', difficulty),
         orderBy('level', 'desc'),
         orderBy('wpm', 'desc'),
         limit(maxResults)
-      );
+      ];
+      
+      // Add time filter if applicable
+      if (timeThreshold) {
+        constraints.splice(1, 0, where('updatedAt', '>=', timeThreshold));
+      }
+      
+      const q = query(leaderboardRef, ...constraints);
       
       const snapshot = await getDocs(q);
       const results = [];
@@ -149,6 +176,11 @@ export async function getLeaderboard(difficulty = 'normal', maxResults = 50) {
       snapshot.forEach((doc) => {
         results.push({ id: doc.id, ...doc.data() });
       });
+      
+      // Filter by time if needed
+      if (timeThreshold) {
+        results = results.filter(r => r.updatedAt?.toDate() >= timeThreshold);
+      }
       
       // Sort in memory
       results.sort((a, b) => {

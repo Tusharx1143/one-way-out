@@ -8,6 +8,7 @@ import { GameScreen } from './components/GameScreen';
 import { GameOverScreen } from './components/GameOverScreen';
 import { AchievementPopup } from './components/AchievementPopup';
 import { testFirebaseConnection } from './services/leaderboard';
+import { initTheme } from './config/themes';
 
 function App() {
   const sound = useSound();
@@ -16,8 +17,9 @@ function App() {
   const [showDeathScreen, setShowDeathScreen] = useState(false);
   const [gameRecorded, setGameRecorded] = useState(false);
   
-  // Test Firebase on app load
+  // Initialize theme and test Firebase on app load
   useEffect(() => {
+    initTheme();
     testFirebaseConnection();
   }, []);
   
@@ -42,6 +44,13 @@ function App() {
     handleType,
     startGame,
     startDailyChallenge,
+    startSurvivalMode,
+    activePowerUps,
+    currentLevelPowerUp,
+    streakMultiplier,
+    timeSurvived,
+    selectedTheme,
+    setSelectedTheme,
   } = useGame(sound);
 
   // Record game stats when game ends
@@ -99,11 +108,14 @@ function App() {
         <StartScreen 
           onStart={startGame} 
           onStartDaily={startDailyChallenge}
+          onStartSurvival={startSurvivalMode}
           stats={stats}
           user={user}
           onSignIn={signInWithGoogle}
           onSignOut={signOut}
           authLoading={authLoading}
+          selectedTheme={selectedTheme}
+          onThemeChange={setSelectedTheme}
         />
         <AchievementPopup 
           achievements={newAchievements} 
@@ -132,6 +144,11 @@ function App() {
           difficulty={difficulty}
           isGameOver={true}
           onType={() => {}}
+          streakMultiplier={streakMultiplier}
+          timeSurvived={timeSurvived}
+          gameMode={gameMode}
+          activePowerUps={activePowerUps}
+          currentLevelPowerUp={currentLevelPowerUp}
         />
       );
     }
@@ -174,6 +191,11 @@ function App() {
         difficulty={difficulty}
         isGameOver={false}
         onType={handleType}
+        streakMultiplier={streakMultiplier}
+        timeSurvived={timeSurvived}
+        gameMode={gameMode}
+        activePowerUps={activePowerUps}
+        currentLevelPowerUp={currentLevelPowerUp}
       />
       <AchievementPopup 
         achievements={newAchievements} 

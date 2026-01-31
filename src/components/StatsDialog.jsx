@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { THEMES, getUnlockedThemes, applyTheme } from '../config/themes';
 
-export function StatsDialog({ stats, onClose, user }) {
+export function StatsDialog({ stats, onClose, user, selectedTheme, onThemeChange }) {
   const [timeframe, setTimeframe] = useState('all'); // all, week, month
   const [showChart, setShowChart] = useState(true);
 
@@ -127,6 +128,41 @@ export function StatsDialog({ stats, onClose, user }) {
             </div>
           </div>
         )}
+
+        {/* Theme Selector */}
+        <div className="mb-6 pb-6 border-b border-[var(--color-bone)]/20">
+          <h3 className="text-[var(--color-bone)] font-bold text-sm mb-3">⚙️ Themes</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {Object.entries(THEMES).map(([id, theme]) => {
+              const isUnlocked = !theme.unlockedBy || (stats.unlockedAchievements?.includes(theme.unlockedBy));
+              const isSelected = selectedTheme === id;
+              
+              return (
+                <button
+                  key={id}
+                  onClick={() => {
+                    if (isUnlocked) {
+                      applyTheme(id);
+                      onThemeChange(id);
+                    }
+                  }}
+                  disabled={!isUnlocked}
+                  className={`p-2 rounded text-center transition-all text-sm ${
+                    isSelected
+                      ? 'border-2 border-[var(--color-bone)] bg-[var(--color-bone)]/10'
+                      : isUnlocked
+                      ? 'border border-[var(--color-bone)]/30 hover:border-[var(--color-bone)]/60'
+                      : 'border border-[var(--color-bone)]/10 opacity-40 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="text-lg mb-1">{theme.icon}</div>
+                  <div className="text-xs font-bold">{theme.name}</div>
+                  {isSelected && <div className="text-xs text-green-400 mt-1">✓</div>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Close button */}
         <button

@@ -1,6 +1,14 @@
-export function StatsBar({ level, mistakes, maxMistakes, bestScore, timeLeft, maxTime, combo, wpm, difficulty }) {
+export function StatsBar({ level, mistakes, maxMistakes, bestScore, timeLeft, maxTime, combo, wpm, difficulty, streakMultiplier, timeSurvived, gameMode }) {
   const timePercent = (timeLeft / maxTime) * 100;
   const isLowTime = timeLeft <= 3;
+  
+  // Calculate multiplier color
+  const getMultiplierColor = () => {
+    if (streakMultiplier >= 2) return 'text-red-400';
+    if (streakMultiplier >= 1.5) return 'text-orange-400';
+    if (streakMultiplier > 1) return 'text-yellow-400';
+    return 'text-[var(--color-bone)]/40';
+  };
   
   return (
     <div className="space-y-4">
@@ -20,11 +28,21 @@ export function StatsBar({ level, mistakes, maxMistakes, bestScore, timeLeft, ma
       <div className="flex flex-wrap justify-between items-center text-xs md:text-base opacity-70 gap-2">
         {/* Left side - Level, Best, Combo */}
         <div className="flex gap-3 md:gap-6">
-          <span>LVL <span className="text-[var(--color-bone)] font-bold">{level}</span></span>
+          <span>
+            {gameMode === 'survival' ? 'SURVIVED' : 'LVL'} 
+            <span className="text-[var(--color-bone)] font-bold">
+              {gameMode === 'survival' ? timeSurvived + 's' : level}
+            </span>
+          </span>
           <span>BEST <span className="text-green-400 font-bold">{bestScore}</span></span>
           {combo > 1 && (
             <span className="text-yellow-400 animate-pulse">
               🔥 x{combo}
+            </span>
+          )}
+          {streakMultiplier > 1 && (
+            <span className={`${getMultiplierColor()} animate-pulse`}>
+              ⚡ {streakMultiplier.toFixed(1)}x
             </span>
           )}
         </div>

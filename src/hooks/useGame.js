@@ -3,7 +3,16 @@ import sentences from '../data/sentences.json';
 import { DIFFICULTIES, getTimerDuration, getMaxMistakes, getMinSentenceLevel } from '../config/difficulty';
 import { getDailyChallengeSentences, markDailyPlayed, saveDailyBest } from '../config/dailyChallenge';
 
-function getSentenceForLevel(level, difficulty, sentencePool = null, lastSentenceText = null) {
+// Power-ups Types
+export const POWER_UPS = {
+  FREEZE_TIME: 'freeze_time',     // +5 seconds
+  SHIELD: 'shield',                // Next mistake doesn't count
+  EXTRA_LIFE: 'extra_life',        // Regain a life
+};
+
+const POWER_UP_SPAWN_CHANCE = 0.20; // 20% chance per sentence
+
+function getSentenceForLevel(level, difficulty, sentencePool = null, lastSentenceText = null, wpm = 0) {
   const pool = sentencePool || sentences;
   
   if (sentencePool) {
@@ -12,8 +21,15 @@ function getSentenceForLevel(level, difficulty, sentencePool = null, lastSentenc
     return pool[index];
   }
   
-  const minLevel = getMinSentenceLevel(difficulty);
-  const effectiveLevel = Math.max(level, minLevel);
+  let minLevel = getMinSentenceLevel(difficulty);
+  let effectiveLevel = Math.max(level, minLevel);
+  
+  // Adaptive difficulty: adjust based on WPM
+  if (wpm > 100) {
+    effectiveLevel = Math.min(effectiveLevel + Math.floor((wpm - 100) / 50), 10);
+  } else if (wpm > 0 && wpm < 50) {
+    effectiveLevel = Math.max(effectiveLevel - Math.floor((50 - wpm) / 25), minLevel);
+  }
   
   let available = pool.filter(s => s.level <= effectiveLevel && s.level >= minLevel);
   if (available.length === 0) return pool[0];
@@ -29,11 +45,17 @@ function getSentenceForLevel(level, difficulty, sentencePool = null, lastSentenc
   return finalPool[Math.floor(Math.random() * finalPool.length)];
 }
 
+function generateRandomPowerUp() {
+  if (Math.random() > POWER_UP_SPAWN_CHANCE) return null;
+  const types = Object.values(POWER_UPS);
+  return types[Math.floor(Math.random() * types.length)];
+}
+
 export function useGame(soundHooks = {}) {
   const { playKeystroke, playError, playSuccess, playGameOver, playTick, playWarningTick, startHeartbeat, updateHeartbeat, stopHeartbeat } = soundHooks;
 
   const [gameState, setGameState] = useState('idle');
-  const [gameMode, setGameMode] = useState('normal'); // normal, daily
+  const [gameMode, setGameMode] = useState('normal'); // normal, daily, survival
   const [difficulty, setDifficulty] = useState('normal');
   const [level, setLevel] = useState(1);
   const [totalMistakes, setTotalMistakes] = useState(0);
@@ -50,6 +72,21 @@ export function useGame(soundHooks = {}) {
   const [bestScore, setBestScore] = useState(() => {
     return parseInt(localStorage.getItem('oneWayOut_bestScore') || '0', 10);
   });
+  
+  // New: Power-ups System
+  const [activePowerUps, setActivePowerUps] = useState([]);
+  const [currentLevelPowerUp, setCurrentLevelPowerUp] = useState(null);
+  
+  // New: Streak Multiplier
+  const [streakMultiplier, setStreakMultiplier] = useState(1);
+  
+  // New: Survival Mode
+  const [timeSurvived, setTimeSurvived] = useState(0);
+  
+  // New: Cosmetics
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    return localStorage.getItem('oneWayOut_selectedTheme') || 'normal';
+  });
 
   const timerRef = useRef(null);
   const lastTickRef = useRef(0);
@@ -58,6 +95,8 @@ export function useGame(soundHooks = {}) {
   const sentencePoolRef = useRef(null);
   const mistakesThisLevelRef = useRef(0);
   const lastSentenceTextRef = useRef(null);
+  const shieldActiveRef = useRef(false);
+  const survivalStartTimeRef = useRef(null);
 
   const maxMistakes = gameMode === 'daily' ? 5 : getMaxMistakes(difficulty);
 
@@ -103,6 +142,7 @@ export function useGame(soundHooks = {}) {
       const newMistakes = totalMistakes + 1;
       setTotalMistakes(newMistakes);
       setCombo(0);
+      setStreakMultiplier(1);
       setPerfectStreak(0);
       
       setIsShaking(true);
@@ -129,13 +169,56 @@ export function useGame(soundHooks = {}) {
         setLevel(newLevel);
         setTyped('');
         mistakesThisLevelRef.current = 0;
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current);
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, wpm);
         lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
-        startTimer(gameMode === 'daily' ? 12 : getTimerDuration(newLevel, difficulty));
+        
+        if (gameMode === 'daily') {
+          startTimer(12);
+        } else if (gameMode === 'survival') {
+          startTimer(getTimerDuration(newLevel, difficulty));
+        } else {
+          startTimer(getTimerDuration(newLevel, difficulty));
+        }
       }
     }
-  }, [timeLeft, gameState, totalMistakes, level, difficulty, gameMode, maxMistakes, clearTimer, startTimer, playError, playGameOver, updateHeartbeat, stopHeartbeat]);
+  }, [timeLeft, gameState, totalMistakes, level, difficulty, gameMode, maxMistakes, wpm, clearTimer, startTimer, playError, playGameOver, updateHeartbeat, stopHeartbeat]);
+
+  // Track time survived in survival mode
+  useEffect(() => {
+    if (gameMode !== 'survival' || gameState !== 'playing') return;
+    
+    const interval = setInterval(() => {
+      if (survivalStartTimeRef.current) {
+        const elapsed = Math.floor((Date.now() - survivalStartTimeRef.current) / 1000);
+        setTimeSurvived(elapsed);
+      }
+    }, 100);
+    
+    return () => clearInterval(interval);
+  }, [gameMode, gameState]);
+
+  // Handle active power-ups
+  useEffect(() => {
+    if (activePowerUps.length === 0) return;
+    
+    activePowerUps.forEach(powerUp => {
+      if (powerUp === POWER_UPS.SHIELD) {
+        shieldActiveRef.current = true;
+      } else if (powerUp === POWER_UPS.FREEZE_TIME) {
+        // Add 5 seconds to timer
+        setTimeLeft(prev => prev + 5);
+      } else if (powerUp === POWER_UPS.EXTRA_LIFE) {
+        // Restore a life by reducing mistakes
+        if (totalMistakes > 0) {
+          setTotalMistakes(prev => Math.max(0, prev - 1));
+        }
+      }
+    });
+    
+    // Remove power-ups after use (except shield which is handled in handleType)
+    setActivePowerUps(prev => prev.filter(p => p !== POWER_UPS.FREEZE_TIME && p !== POWER_UPS.EXTRA_LIFE));
+  }, [activePowerUps, totalMistakes]);
 
   const startGame = useCallback((selectedDifficulty = 'normal') => {
     setGameMode('normal');
@@ -148,15 +231,21 @@ export function useGame(soundHooks = {}) {
     setMaxCombo(0);
     setWpm(0);
     setPerfectStreak(0);
+    setActivePowerUps([]);
+    setCurrentLevelPowerUp(null);
+    setStreakMultiplier(1);
     mistakesThisLevelRef.current = 0;
     wpmStartRef.current = null;
     totalCharsRef.current = 0;
     lastSentenceTextRef.current = null;
+    shieldActiveRef.current = false;
     setGameState('playing');
     
-    const sentence = getSentenceForLevel(1, selectedDifficulty);
+    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0);
     lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
+    const powerUp = generateRandomPowerUp();
+    setCurrentLevelPowerUp(powerUp);
     const duration = getTimerDuration(1, selectedDifficulty);
     startTimer(duration);
     startHeartbeat?.(0);
@@ -173,14 +262,51 @@ export function useGame(soundHooks = {}) {
     setMaxCombo(0);
     setWpm(0);
     setPerfectStreak(0);
+    setActivePowerUps([]);
+    setCurrentLevelPowerUp(null);
+    setStreakMultiplier(1);
     mistakesThisLevelRef.current = 0;
     wpmStartRef.current = null;
     totalCharsRef.current = 0;
+    shieldActiveRef.current = false;
     setGameState('playing');
     
     const sentence = sentencePoolRef.current[0];
     setCurrentSentence(sentence.text);
     startTimer(12); // Fixed timer for daily
+    startHeartbeat?.(0);
+  }, [startTimer, startHeartbeat]);
+
+  const startSurvivalMode = useCallback((selectedDifficulty = 'normal') => {
+    setGameMode('survival');
+    setDifficulty(selectedDifficulty);
+    sentencePoolRef.current = null;
+    setLevel(1);
+    setTotalMistakes(0);
+    setTyped('');
+    setCombo(0);
+    setMaxCombo(0);
+    setWpm(0);
+    setPerfectStreak(0);
+    setActivePowerUps([]);
+    setCurrentLevelPowerUp(null);
+    setStreakMultiplier(1);
+    setTimeSurvived(0);
+    mistakesThisLevelRef.current = 0;
+    wpmStartRef.current = null;
+    totalCharsRef.current = 0;
+    lastSentenceTextRef.current = null;
+    shieldActiveRef.current = false;
+    survivalStartTimeRef.current = Date.now();
+    setGameState('playing');
+    
+    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0);
+    lastSentenceTextRef.current = sentence.text;
+    setCurrentSentence(sentence.text);
+    const powerUp = generateRandomPowerUp();
+    setCurrentLevelPowerUp(powerUp);
+    const duration = getTimerDuration(1, selectedDifficulty);
+    startTimer(duration);
     startHeartbeat?.(0);
   }, [startTimer, startHeartbeat]);
 
@@ -213,6 +339,10 @@ export function useGame(soundHooks = {}) {
         setCombo(newCombo);
         setMaxCombo(prev => Math.max(prev, newCombo));
         
+        // Calculate streak multiplier: 5x = 1.5x, 10x = 2x, 15x = 2.5x, etc
+        const newMultiplier = 1 + (newCombo >= 5 ? Math.floor((newCombo - 4) / 5) * 0.5 : 0);
+        setStreakMultiplier(newMultiplier);
+        
         // Track perfect streak (no mistakes this level)
         if (mistakesThisLevelRef.current === 0) {
           setPerfectStreak(prev => prev + 1);
@@ -225,10 +355,30 @@ export function useGame(soundHooks = {}) {
         setTyped('');
         mistakesThisLevelRef.current = 0;
         
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current);
+        // Get current WPM for adaptive difficulty
+        const currentWPM = wpm;
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, currentWPM);
         lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
-        startTimer(gameMode === 'daily' ? 12 : getTimerDuration(newLevel, difficulty));
+        
+        // Trigger power-up if it exists for this level
+        if (currentLevelPowerUp) {
+          setActivePowerUps([...activePowerUps, currentLevelPowerUp]);
+        }
+        
+        // Generate new power-up for next level
+        const newPowerUp = generateRandomPowerUp();
+        setCurrentLevelPowerUp(newPowerUp);
+        
+        // Handle timer based on mode
+        if (gameMode === 'survival') {
+          // In survival mode, timer decreases continuously
+          startTimer(getTimerDuration(newLevel, difficulty));
+        } else if (gameMode === 'daily') {
+          startTimer(12);
+        } else {
+          startTimer(getTimerDuration(newLevel, difficulty));
+        }
         
         if (newLevel > bestScore) {
           setBestScore(newLevel);
@@ -236,9 +386,18 @@ export function useGame(soundHooks = {}) {
         }
       }
     } else {
+      // Check for shield power-up
+      if (shieldActiveRef.current) {
+        shieldActiveRef.current = false;
+        setActivePowerUps(prev => prev.filter(p => p !== POWER_UPS.SHIELD));
+        playKeystroke?.();
+        return;
+      }
+      
       playError?.();
       mistakesThisLevelRef.current += 1;
       setCombo(0);
+      setStreakMultiplier(1);
       setPerfectStreak(0);
       const newMistakes = totalMistakes + 1;
       setTotalMistakes(newMistakes);
@@ -262,7 +421,7 @@ export function useGame(soundHooks = {}) {
         setGameState('gameover');
       }
     }
-  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
+  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
 
   useEffect(() => {
     return () => {
@@ -292,5 +451,13 @@ export function useGame(soundHooks = {}) {
     handleType,
     startGame,
     startDailyChallenge,
+    startSurvivalMode,
+    // New: Power-ups & Multiplier
+    activePowerUps,
+    currentLevelPowerUp,
+    streakMultiplier,
+    timeSurvived,
+    selectedTheme,
+    setSelectedTheme,
   };
 }
