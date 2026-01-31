@@ -12,6 +12,29 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
+// Test Firebase connection
+export async function testFirebaseConnection() {
+  try {
+    console.log('🔧 Testing Firebase connection...');
+    const testRef = doc(db, 'test', 'connection_test');
+    const testData = { timestamp: serverTimestamp(), status: 'connected' };
+    
+    await setDoc(testRef, testData);
+    console.log('✅ Firebase write test successful!');
+    
+    const testGet = await getDoc(testRef);
+    if (testGet.exists()) {
+      console.log('✅ Firebase read test successful!');
+      return true;
+    }
+  } catch (err) {
+    console.error('❌ Firebase connection test FAILED:', err);
+    console.error('Error code:', err.code);
+    console.error('Error message:', err.message);
+    return false;
+  }
+}
+
 // Save user profile and stats
 export async function saveUserProfile(userId, data) {
   try {
@@ -48,15 +71,19 @@ export async function submitScore(userId, userData) {
   try {
     const { displayName, photoURL, level, wpm, maxCombo, difficulty } = userData;
     
+    console.log('📊 Submitting score:', { userId, displayName, level, difficulty, wpm, maxCombo });
+    
     const leaderboardRef = doc(db, 'leaderboard', `${difficulty}_${userId}`);
     
     // Get existing score
     const existing = await getDoc(leaderboardRef);
     const existingLevel = existing.exists() ? existing.data().level : 0;
     
+    console.log('📊 Existing level:', existingLevel, 'New level:', level);
+    
     // Only update if new score is higher
     if (level > existingLevel) {
-      await setDoc(leaderboardRef, {
+      const scoreData = {
         displayName: displayName || 'Anonymous',
         photoURL: photoURL || null,
         level,
@@ -65,13 +92,20 @@ export async function submitScore(userId, userData) {
         difficulty,
         userId,
         updatedAt: serverTimestamp(),
-      });
-      console.log('Score submitted:', level, 'for difficulty:', difficulty);
+      };
+      
+      console.log('📊 Writing score data:', scoreData);
+      
+      await setDoc(leaderboardRef, scoreData);
+      console.log('✅ Score submitted successfully:', level, 'for difficulty:', difficulty);
+    } else {
+      console.log('⚠️ Score not higher than existing, skipping update');
     }
     
     return true;
   } catch (err) {
-    console.error('Error submitting score:', err);
+    console.error('❌ Error submitting score:', err);
+    console.error('Error details:', err.message, err.code);
     return false;
   }
 }
@@ -79,6 +113,8 @@ export async function submitScore(userId, userData) {
 // Get leaderboard - simplified query to avoid index issues
 export async function getLeaderboard(difficulty = 'normal', maxResults = 50) {
   try {
+    console.log('🏆 Fetching leaderboard for difficulty:', difficulty);
+    
     const leaderboardRef = collection(db, 'leaderboard');
     
     // Try with full query first
@@ -97,11 +133,11 @@ export async function getLeaderboard(difficulty = 'normal', maxResults = 50) {
         results.push({ id: doc.id, ...doc.data() });
       });
       
-      console.log('Leaderboard loaded:', results.length, 'scores');
+      console.log('✅ Leaderboard loaded:', results.length, 'scores for', difficulty);
       return results;
     } catch (indexError) {
       // Fallback: simpler query if index not ready
-      console.log('Index not ready, using fallback query');
+      console.log('⚠️ Index not ready, using fallback query:', indexError.code);
       const q = query(
         leaderboardRef,
         where('difficulty', '==', difficulty),
@@ -120,10 +156,12 @@ export async function getLeaderboard(difficulty = 'normal', maxResults = 50) {
         return b.wpm - a.wpm;
       });
       
+      console.log('✅ Leaderboard (fallback) loaded:', results.length, 'scores for', difficulty);
       return results;
     }
   } catch (err) {
-    console.error('Error getting leaderboard:', err);
+    console.error('❌ Error getting leaderboard:', err);
+    console.error('Error code:', err.code);
     return [];
   }
 }

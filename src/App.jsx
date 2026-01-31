@@ -7,6 +7,7 @@ import { StartScreen } from './components/StartScreen';
 import { GameScreen } from './components/GameScreen';
 import { GameOverScreen } from './components/GameOverScreen';
 import { AchievementPopup } from './components/AchievementPopup';
+import { testFirebaseConnection } from './services/leaderboard';
 
 function App() {
   const sound = useSound();
@@ -14,6 +15,11 @@ function App() {
   const { stats, newAchievements, recordGame, clearNewAchievements } = useStats(user);
   const [showDeathScreen, setShowDeathScreen] = useState(false);
   const [gameRecorded, setGameRecorded] = useState(false);
+  
+  // Test Firebase on app load
+  useEffect(() => {
+    testFirebaseConnection();
+  }, []);
   
   const {
     gameState,

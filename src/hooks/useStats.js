@@ -34,6 +34,7 @@ export function useStats(user) {
   const [stats, setStats] = useState(loadLocalStats);
   const [newAchievements, setNewAchievements] = useState([]);
   const [syncing, setSyncing] = useState(false);
+  const [pendingSync, setPendingSync] = useState(null);
 
   // Load stats from Firebase when user logs in
   useEffect(() => {
@@ -74,10 +75,62 @@ export function useStats(user) {
     saveLocalStats(stats);
   }, [stats]);
 
-  const recordGame = useCallback(async (gameStats) => {
+  // Sync pending game to Firebase
+  useEffect(() => {
+    if (!pendingSync || !user) return;
+
+    const { gameStats, updatedStats } = pendingSync;
     const { level, wpm, maxCombo, difficulty, perfectStreak, gameMode } = gameStats;
+
+    async function syncToFirebase() {
+      try {
+        console.log('💾 Syncing to Firebase for user:', user.uid);
+        
+        // Save user profile
+        await saveUserProfile(user.uid, {
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          ...updatedStats,
+          achievements: updatedStats.unlockedAchievements,
+        });
+
+        // Submit to leaderboard
+        if (gameMode === 'daily') {
+          console.log('📅 Submitting daily score');
+          await submitDailyScore(user.uid, {
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            level,
+            wpm,
+            maxCombo,
+          }, getDailyChallengeId());
+        } else {
+          console.log('🏆 Submitting regular score to leaderboard');
+          await submitScore(user.uid, {
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            level,
+            wpm,
+            maxCombo,
+            difficulty,
+          });
+        }
+
+        console.log('✅ Firebase sync complete!');
+        setPendingSync(null); // Clear pending
+      } catch (err) {
+        console.error('❌ Firebase sync failed:', err);
+      }
+    }
+
+    syncToFirebase();
+  }, [pendingSync, user]);
+
+  const recordGame = useCallback((gameStats) => {
+    console.log('🎮 recordGame called with:', gameStats);
+    console.log('👤 Current user:', user ? user.uid : 'NOT LOGGED IN');
     
-    let newStats;
+    const { level, wpm, maxCombo, difficulty, perfectStreak, gameMode } = gameStats;
     
     setStats(prev => {
       const updated = {
@@ -110,40 +163,21 @@ export function useStats(user) {
         setNewAchievements(newlyUnlocked);
       }
 
-      newStats = updated;
-      return updated;
-    });
-
-    // Sync to Firebase if logged in
-    if (user && newStats) {
-      // Save user profile
-      await saveUserProfile(user.uid, {
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        ...newStats,
-        achievements: newStats.unlockedAchievements,
-      });
-
-      // Submit to leaderboard
-      if (gameMode === 'daily') {
-        await submitDailyScore(user.uid, {
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          level,
-          wpm,
-          maxCombo,
-        }, getDailyChallengeId());
-      } else {
-        await submitScore(user.uid, {
-          displayName: user.displayName,
-          photoURL: user.photoURL,
+      // Store pending sync data for Firebase
+      setPendingSync({
+        gameStats: {
           level,
           wpm,
           maxCombo,
           difficulty,
-        });
-      }
-    }
+          perfectStreak,
+          gameMode,
+        },
+        updatedStats: updated,
+      });
+
+      return updated;
+    });
   }, [user]);
 
   const clearNewAchievements = useCallback(() => {
