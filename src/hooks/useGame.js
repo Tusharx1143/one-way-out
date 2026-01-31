@@ -3,7 +3,7 @@ import sentences from '../data/sentences.json';
 import { DIFFICULTIES, getTimerDuration, getMaxMistakes, getMinSentenceLevel } from '../config/difficulty';
 import { getDailyChallengeSentences, markDailyPlayed, saveDailyBest } from '../config/dailyChallenge';
 
-function getSentenceForLevel(level, difficulty, sentencePool = null) {
+function getSentenceForLevel(level, difficulty, sentencePool = null, lastSentenceText = null) {
   const pool = sentencePool || sentences;
   
   if (sentencePool) {
@@ -15,8 +15,13 @@ function getSentenceForLevel(level, difficulty, sentencePool = null) {
   const minLevel = getMinSentenceLevel(difficulty);
   const effectiveLevel = Math.max(level, minLevel);
   
-  const available = pool.filter(s => s.level <= effectiveLevel && s.level >= minLevel);
+  let available = pool.filter(s => s.level <= effectiveLevel && s.level >= minLevel);
   if (available.length === 0) return pool[0];
+  
+  // Avoid repeating the same sentence
+  if (lastSentenceText && available.length > 1) {
+    available = available.filter(s => s.text !== lastSentenceText);
+  }
   
   const weighted = available.filter(s => s.level >= effectiveLevel - 5);
   const finalPool = weighted.length > 0 ? weighted : available;
@@ -52,6 +57,7 @@ export function useGame(soundHooks = {}) {
   const totalCharsRef = useRef(0);
   const sentencePoolRef = useRef(null);
   const mistakesThisLevelRef = useRef(0);
+  const lastSentenceTextRef = useRef(null);
 
   const maxMistakes = gameMode === 'daily' ? 5 : getMaxMistakes(difficulty);
 
@@ -123,7 +129,8 @@ export function useGame(soundHooks = {}) {
         setLevel(newLevel);
         setTyped('');
         mistakesThisLevelRef.current = 0;
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current);
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current);
+        lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
         startTimer(gameMode === 'daily' ? 12 : getTimerDuration(newLevel, difficulty));
       }
@@ -144,9 +151,11 @@ export function useGame(soundHooks = {}) {
     mistakesThisLevelRef.current = 0;
     wpmStartRef.current = null;
     totalCharsRef.current = 0;
+    lastSentenceTextRef.current = null;
     setGameState('playing');
     
     const sentence = getSentenceForLevel(1, selectedDifficulty);
+    lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
     const duration = getTimerDuration(1, selectedDifficulty);
     startTimer(duration);
@@ -216,7 +225,8 @@ export function useGame(soundHooks = {}) {
         setTyped('');
         mistakesThisLevelRef.current = 0;
         
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current);
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current);
+        lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
         startTimer(gameMode === 'daily' ? 12 : getTimerDuration(newLevel, difficulty));
         

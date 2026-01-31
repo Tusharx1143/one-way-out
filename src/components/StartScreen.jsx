@@ -3,6 +3,8 @@ import { DIFFICULTIES } from '../config/difficulty';
 import { hasDailyBeenPlayed, getDailyBest, getTimeUntilNextDaily } from '../config/dailyChallenge';
 import { AuthButton } from './AuthButton';
 import { Leaderboard } from './Leaderboard';
+import { PracticeMode } from './PracticeMode';
+import { StatsDialog } from './StatsDialog';
 import { ACHIEVEMENTS } from '../config/achievements';
 
 export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSignOut, authLoading }) {
@@ -11,6 +13,8 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
   const [ready, setReady] = useState(false);
   const [showMode, setShowMode] = useState('main');
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showPractice, setShowPractice] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   const dailyPlayed = hasDailyBeenPlayed();
   const dailyBest = getDailyBest();
@@ -105,6 +109,14 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
             )}
           </button>
 
+          {/* Practice Mode button */}
+          <button
+            onClick={() => setShowPractice(true)}
+            className="py-3 px-8 border border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/10 transition-all text-sm tracking-wider"
+          >
+            📚 PRACTICE MODE
+          </button>
+
           {/* Leaderboard button */}
           <button
             onClick={() => setShowLeaderboard(true)}
@@ -115,10 +127,10 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
 
           {stats && stats.totalGames > 0 && (
             <button
-              onClick={() => setShowMode('stats')}
+              onClick={() => setShowStats(true)}
               className="py-3 px-8 border border-[var(--color-bone)]/30 text-[var(--color-bone)]/60 hover:border-[var(--color-bone)]/60 hover:text-[var(--color-bone)] transition-all text-sm tracking-wider"
             >
-              📊 STATS & ACHIEVEMENTS
+              📊 YOUR STATS
             </button>
           )}
         </div>
@@ -228,6 +240,26 @@ export function StartScreen({ onStart, onStartDaily, stats, user, onSignIn, onSi
         <Leaderboard 
           onClose={() => setShowLeaderboard(false)}
           currentUserId={user?.uid}
+        />
+      )}
+
+      {/* Practice Mode modal */}
+      {showPractice && (
+        <PracticeMode
+          onClose={() => setShowPractice(false)}
+          onComplete={() => {
+            setShowPractice(false);
+            setShowMode('main');
+          }}
+        />
+      )}
+
+      {/* Stats Dialog modal */}
+      {showStats && (
+        <StatsDialog
+          stats={stats}
+          user={user}
+          onClose={() => setShowStats(false)}
         />
       )}
     </div>
