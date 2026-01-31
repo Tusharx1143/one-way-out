@@ -74,9 +74,9 @@ export function GameOverScreen({ level, bestScore, maxCombo, wpm, difficulty, ga
 
         <button
           onClick={() => onRestart(null)}
-          className="text-[var(--color-bone)]/40 hover:text-[var(--color-bone)]/60 text-sm transition-colors py-2"
+          className="px-8 py-4 border-2 border-[var(--color-bone)]/30 hover:border-[var(--color-bone)] text-[var(--color-bone)]/60 hover:text-[var(--color-bone)] transition-colors duration-200 tracking-wider font-semibold"
         >
-          {isDaily ? '← back to menu' : 'change difficulty'}
+          🏠 BACK TO HOME
         </button>
       </div>
 
