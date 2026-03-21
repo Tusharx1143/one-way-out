@@ -47,7 +47,7 @@ jobs:
         run: npm test
 
       - name: 🏗️ Scan Source Code (Grype)
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v7
         with:
           path: "./src"
           exclude: "node_modules"
