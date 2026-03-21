@@ -77,6 +77,13 @@ jobs:
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
 
+      - name: 📦 Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
       # - name: 🏗️ Install Grype
       #   run: |
       #     curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
@@ -111,6 +118,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: 📦 Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
       - name: 🔐 Validate Secret
         run: |
@@ -163,6 +176,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: 📦 Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
       - name: 🔐 Validate Secret
         run: |
