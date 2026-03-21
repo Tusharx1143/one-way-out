@@ -11,9 +11,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
 
   ci:
@@ -26,7 +23,7 @@ jobs:
 
     steps:
       - name: 🛒 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🟢 Setup Node
         uses: actions/setup-node@v4
@@ -55,6 +52,7 @@ jobs:
 
       - name: 📤 Upload Gitleaks SARIF
         uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true
         with:
           sarif_file: gitleaks.sarif
 
@@ -117,7 +115,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 📦 Download dist artifact
         uses: actions/download-artifact@v4
@@ -175,7 +173,7 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/Release-'))
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 📦 Download dist artifact
         uses: actions/download-artifact@v4
