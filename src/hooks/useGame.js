@@ -306,7 +306,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     startTimer(duration);
     playStatic?.();
     startHeartbeat?.(0);
-  }, [startTimer, startHeartbeat]);
+  }, [startTimer, startHeartbeat, recentlyUsedSentences, userName, playGlitch, playStatic]);
 
   const startDailyChallenge = useCallback(() => {
     setGameMode('daily');
@@ -379,7 +379,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     // No timer for endless mode
     clearTimer();
     startHeartbeat?.(0);
-  }, [clearTimer, startHeartbeat]);
+  }, [clearTimer, startHeartbeat, recentlyUsedSentences, userName]);
 
   const startStoryMode = useCallback((storyId) => {
     const story = allStories.find(s => s.id === storyId);
@@ -610,7 +610,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         }
       }
     }
-  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, stageWpms, totalErrors, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
+  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, stageWpms, totalErrors, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer, recentlyUsedSentences, userName]);
 
   useEffect(() => {
     return () => {
