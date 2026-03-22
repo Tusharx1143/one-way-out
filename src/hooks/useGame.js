@@ -8,8 +8,12 @@ import { POWER_UPS, generateRandomPowerUp } from '../game/logic/powerUps';
 import { computeWpm } from '../game/logic/wpm';
 import { computeStreakMultiplier } from '../game/logic/streakMultiplier';
 
-export function useGame(soundHooks = {}) {
-  const { playKeystroke, playError, playSuccess, playGameOver, playTick, playWarningTick, startHeartbeat, updateHeartbeat, stopHeartbeat } = soundHooks;
+export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = null) {
+  const { 
+    playKeystroke, playError, playSuccess, playGameOver, 
+    playTick, playWarningTick, startHeartbeat, updateHeartbeat, 
+    stopHeartbeat, playGlitch, playStatic 
+  } = soundHooks;
 
   const [gameState, setGameState] = useState('idle');
   const [gameMode, setGameMode] = useState('normal'); // normal, daily, survival
@@ -55,6 +59,9 @@ export function useGame(soundHooks = {}) {
   const [endlessLives, setEndlessLives] = useState(5);
   const [currentStoryId, setCurrentStoryId] = useState(null);
   const [isStoryComplete, setIsStoryComplete] = useState(false);
+  
+  // New: Track sentences used in current game (for anti-repetition)
+  const [sentencesUsed, setSentencesUsed] = useState([]);
 
   const timerRef = useRef(null);
   const lastTickRef = useRef(0);
@@ -70,12 +77,14 @@ export function useGame(soundHooks = {}) {
   const doublePointsRef = useRef(false);
   const isPausedRef = useRef(isPaused);
   const gameStateRef = useRef(gameState);
+  const sentencesUsedRef = useRef([]); // Track sentences used in current game
 
   // Sync state to ref for timer interval to access without recreating
   useEffect(() => {
     isPausedRef.current = isPaused;
     gameStateRef.current = gameState;
-  }, [isPaused, gameState]);
+    sentencesUsedRef.current = sentencesUsed;
+  }, [isPaused, gameState, sentencesUsed]);
 
   const maxMistakes = gameMode === 'daily' ? 5 : (gameMode === 'endless' ? 5 : getMaxMistakes(difficulty));
 
@@ -201,17 +210,21 @@ export function useGame(soundHooks = {}) {
         doublePointsRef.current = false;
         setActivePowerUps(prev => prev.filter(p => p === POWER_UPS.SHIELD));
 
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, wpm);
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, wpm, Math.random, null, recentlyUsedSentences, userName);
         lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
+        // Track sentence for anti-repetition
+        sentencesUsedRef.current.push(sentence.text);
         
-        if (gameMode === 'daily') {
-          startTimer(getTimerDuration(newLevel, difficulty, sentence.text.length));
-        } else if (gameMode === 'survival') {
-          startTimer(getTimerDuration(newLevel, difficulty, sentence.text.length));
-        } else {
-          startTimer(getTimerDuration(newLevel, difficulty, sentence.text.length));
+        const powerUp = generateRandomPowerUp(Math.random, newLevel);
+        if (powerUp) {
+          playGlitch?.();
         }
+        setCurrentLevelPowerUp(powerUp);
+        
+        const duration = getTimerDuration(newLevel, difficulty, sentence.text.length);
+        startTimer(duration);
+        playStatic?.();
       }
     }
   }, [timeLeft, gameState, totalMistakes, level, difficulty, gameMode, maxMistakes, wpm, clearTimer, startTimer, playError, playGameOver, updateHeartbeat, stopHeartbeat]);
@@ -282,15 +295,18 @@ export function useGame(soundHooks = {}) {
     setIsStoryComplete(false);
     setGameState('playing');
     
-    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0);
+    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName);
     lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
+    sentencesUsedRef.current = [sentence.text]; // Initialize tracking
     const powerUp = generateRandomPowerUp();
+    if (powerUp) playGlitch?.();
     setCurrentLevelPowerUp(powerUp);
     const duration = getTimerDuration(1, selectedDifficulty, sentence.text.length);
     startTimer(duration);
+    playStatic?.();
     startHeartbeat?.(0);
-  }, [startTimer, startHeartbeat]);
+  }, [startTimer, startHeartbeat, recentlyUsedSentences, userName, playGlitch, playStatic]);
 
   const startDailyChallenge = useCallback(() => {
     setGameMode('daily');
@@ -320,6 +336,7 @@ export function useGame(soundHooks = {}) {
     
     const sentence = sentencePoolRef.current[0];
     setCurrentSentence(sentence.text);
+    sentencesUsedRef.current = [sentence.text]; // Initialize tracking
     startTimer(getTimerDuration(1, 'normal', sentence.text.length)); // Adaptive timer for daily
     startHeartbeat?.(0);
   }, [startTimer, startHeartbeat]);
@@ -353,15 +370,16 @@ export function useGame(soundHooks = {}) {
     setIsStoryComplete(false);
     setGameState('playing');
     
-    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0);
+    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName);
     lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
+    sentencesUsedRef.current = [sentence.text]; // Initialize tracking
     const powerUp = generateRandomPowerUp(Math.random, 1);
     setCurrentLevelPowerUp(powerUp);
     // No timer for endless mode
     clearTimer();
     startHeartbeat?.(0);
-  }, [clearTimer, startHeartbeat]);
+  }, [clearTimer, startHeartbeat, recentlyUsedSentences, userName]);
 
   const startStoryMode = useCallback((storyId) => {
     const story = allStories.find(s => s.id === storyId);
@@ -400,6 +418,7 @@ export function useGame(soundHooks = {}) {
     
     const firstSentence = sentencePoolRef.current[0];
     setCurrentSentence(firstSentence.text);
+    sentencesUsedRef.current = [firstSentence.text]; // Initialize tracking
     startTimer(getTimerDuration(1, 'normal', firstSentence.text.length));
     startHeartbeat?.(0);
   }, [startTimer, startHeartbeat]);
@@ -484,9 +503,14 @@ export function useGame(soundHooks = {}) {
         
         // Get current WPM for adaptive difficulty
         const currentWPM = wpm;
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, currentWPM);
+        const combinedHistory = [...(recentlyUsedSentences || []), ...(sentencesUsedRef.current || [])];
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, currentWPM, Math.random, null, combinedHistory, userName);
         lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
+        
+        // Track sentence for anti-repetition - update both Ref and State
+        sentencesUsedRef.current = [...sentencesUsedRef.current, sentence.text];
+        setSentencesUsed(sentencesUsedRef.current);
         
         // Trigger power-up if it exists for this level
         if (currentLevelPowerUp) {
@@ -586,7 +610,7 @@ export function useGame(soundHooks = {}) {
         }
       }
     }
-  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, stageWpms, totalErrors, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
+  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, stageWpms, totalErrors, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer, recentlyUsedSentences, userName]);
 
   useEffect(() => {
     return () => {
@@ -635,5 +659,7 @@ export function useGame(soundHooks = {}) {
     endlessLives,
     currentStoryId,
     isStoryComplete,
+    // New: Anti-repetition
+    sentencesUsed,
   };
 }

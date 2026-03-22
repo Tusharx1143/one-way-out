@@ -9,17 +9,32 @@ import { GameOverScreen } from './components/GameOverScreen';
 import { AchievementPopup } from './components/AchievementPopup';
 import { testFirebaseConnection } from './services/leaderboard';
 import { initTheme } from './config/themes';
+import { setGlobalVolume } from './hooks/useSound';
 
 function App() {
   const sound = useSound();
   const { user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
-  const { stats, newAchievements, recordGame, recordPractice, recordKonami, recordEasterEgg, clearNewAchievements } = useStats(user);
+  const { 
+    stats, 
+    newAchievements, 
+    recordGame, 
+    recordPractice, 
+    recordKonami, 
+    recordEasterEgg, 
+    clearNewAchievements,
+    updatePreference,
+    updatePersonalization,
+    toggleFavoriteTheme,
+  } = useStats(user);
   const [showDeathScreen, setShowDeathScreen] = useState(false);
   const [gameRecorded, setGameRecorded] = useState(false);
   
   // Initialize theme and (optionally) test Firebase on app load
   useEffect(() => {
     initTheme();
+    if (stats.preferences?.volume !== undefined) {
+      setGlobalVolume(stats.preferences.volume);
+    }
     const enableTest = import.meta.env.DEV && import.meta.env.VITE_ENABLE_FIREBASE_TEST === 'true';
     if (enableTest) {
       testFirebaseConnection();
@@ -45,6 +60,7 @@ function App() {
     maxCombo,
     wpm,
     accuracy,
+    totalErrors,
     perfectStreak,
     bestScore,
     handleType,
@@ -64,7 +80,29 @@ function App() {
     endlessLives,
     currentStoryId,
     isStoryComplete,
-  } = useGame(sound);
+    sentencesUsed,
+  } = useGame(
+    sound, 
+    stats.recentlyUsedSentences || [],
+    stats.preferences?.personalization?.useName 
+      ? (user?.displayName || stats.preferences?.guestName || 'Player') 
+      : null
+  );
+
+  // Mode specific ambience and button clicks
+  useEffect(() => {
+    if (gameState === 'playing') {
+      sound.playModeAmbience(gameMode);
+    }
+  }, [gameState, gameMode]);
+
+  useEffect(() => {
+    const handleGlobalClick = () => {
+      sound.playClick();
+    };
+    window.addEventListener('mousedown', handleGlobalClick);
+    return () => window.removeEventListener('mousedown', handleGlobalClick);
+  }, [sound]);
 
   // Record game stats when game ends
   useEffect(() => {
@@ -79,6 +117,7 @@ function App() {
         gameMode,
         storyId: currentStoryId,
         isStoryComplete,
+        sentencesUsed,
       });
 
       if (level === 40) {
@@ -149,6 +188,9 @@ function App() {
           onRecordPractice={recordPractice}
           onRecordKonami={recordKonami}
           onRecordEasterEgg={recordEasterEgg}
+          updatePreference={updatePreference}
+          updatePersonalization={updatePersonalization}
+          toggleFavoriteTheme={toggleFavoriteTheme}
         />
         <AchievementPopup 
           achievements={newAchievements} 
