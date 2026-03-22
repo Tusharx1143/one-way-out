@@ -2,39 +2,91 @@ name: CI/CD - One Way Out
 
 on:
   push:
-    branches:
-      - '**'
+    branches: ['**']
   pull_request:
-    branches:
-      - master
+    branches: ['master', 'develop']
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-
 jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛒 Checkout Code
-        uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js
+  ci:
+    name: 🧪 CI Pipeline
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v6
+
+      - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: 📦 Install Dependencies
+      - name: 📦 Install
         run: npm ci
 
-      - name: 🧹 Lint Code (ESLint)
+      - name: 🔐 Secret Scan (Gitleaks)
+        run: |
+          docker run --rm \
+            -v $(pwd):/repo \
+            ghcr.io/gitleaks/gitleaks:latest detect \
+            --source="/repo" \
+            --no-git \
+            --redact \
+            --report-format sarif \
+            --report-path /repo/gitleaks.sarif || true
+
+          # fallback if empty
+          if [ ! -s gitleaks.sarif ]; then
+            echo '{"version":"2.1.0","runs":[]}' > gitleaks.sarif
+          fi
+
+      - name: 📤 Upload Gitleaks SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true
+        with:
+          sarif_file: gitleaks.sarif
+
+      - name: 🛡️ npm Audit
+        run: npm audit --audit-level=high
+
+      - name: 🧹 Lint
         run: npm run lint
 
-      - name: 🧪 Run Unit Tests
+      - name: 🧪 Test
         run: npm test
+
+
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: CI/CD
+    permissions:
+      contents: read
+
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/Release-'))
+
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v6
+
+      - name: 🟢 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install
+        run: npm ci
 
       - name: 🏗️ Build App
         run: npm run build
@@ -46,13 +98,87 @@ jobs:
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
 
-      - name: 🚀 Deploy to Firebase
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: 📦 Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+
+  deploy_preview:
+    name: 🌐 Preview Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    environment: CI/CD
+    permissions:
+      contents: read
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: 📦 Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: 🔐 Validate Secret
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ONE_WAY_OUT }}" > firebase-service-account.json
-          export GOOGLE_APPLICATION_CREDENTIALS=firebase-service-account.json
-          npx firebase-tools deploy --non-interactive --force
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          if [ -z "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ONE_WAY_OUT }}" ]; then
+            echo "❌ Firebase secret missing"
+            exit 1
+          fi
+
+      - name: 🔐 Auth Firebase
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ONE_WAY_OUT }}'
+
+      - name: 🚀 Deploy Preview
+        run: |
+          CHANNEL_ID=$(echo "${{ github.ref_name }}" | tr '[:upper:]' '[:lower:]' | tr '.' '-')
+          npx firebase-tools hosting:channel:deploy $CHANNEL_ID \
+            --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} \
+            --expires 7d \
+            --non-interactive
 
 
+  deploy_production:
+    name: 🚀 Production Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    environment: CI/CD
+    permissions:
+      contents: read
+
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/Release-')
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: 📦 Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: 🔐 Validate Secret
+        run: |
+          if [ -z "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ONE_WAY_OUT }}" ]; then
+            echo "❌ Firebase secret missing"
+            exit 1
+          fi
+
+      - name: 🔐 Auth Firebase
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ONE_WAY_OUT }}'
+
+      - name: 🚀 Deploy Production
+        run: |
+          npx firebase-tools deploy \
+            --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} \
+            --non-interactive --force

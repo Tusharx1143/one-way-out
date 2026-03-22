@@ -1,10 +1,9 @@
 import { useState } from 'react';
+import { THEMES, applyTheme } from '../config/themes';
 import { ACHIEVEMENTS } from '../config/achievements';
 
-
-export function StatsDialog({ stats, onClose, user }) {
-
-  const [showChart, setShowChart] = useState(true);
+export function StatsDialog({ stats, onClose, user, selectedTheme, onThemeChange, readOnly = false }) {
+  const [showChart] = useState(true);
 
   // Calculate derived stats
   const totalGames = stats.totalGames || 0;
