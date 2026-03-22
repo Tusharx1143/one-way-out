@@ -225,10 +225,6 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
           >
             ⚙️ SETTINGS
           </button>
-          
-          <div className="text-[var(--color-bone)]/10 text-[8px] uppercase tracking-widest text-center mt-1">
-            v{pkg.version}
-          </div>
         </div>
       )}
 
