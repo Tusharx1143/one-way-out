@@ -67,8 +67,7 @@ export function getSentenceForLevel(
   rng = Math.random,
   poolOverride = null,
   recentlyUsedSentences = [],
-  userName = null,
-  favoriteThemes = []
+  userName = null
 ) {
   const pool = poolOverride || sentencePool || sentences;
 
@@ -141,11 +140,6 @@ export function getSentenceForLevel(
       .filter(Boolean);
     if (!recentFirstWords.includes(s.firstWord)) {
       score += 0.5;
-    }
-
-    // Dynamic Theme Weighting: Boost score if it matches user's favorites
-    if (favoriteThemes.length > 0 && s.themes && s.themes.some(t => favoriteThemes.includes(t))) {
-      score *= 1.5;
     }
 
     return { ...s, score };

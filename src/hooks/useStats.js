@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { getNewAchievements } from '../config/achievements';
-import { saveUserProfile, getUserProfile, submitScore, submitDailyScore } from '../services/leaderboard';
+import { saveUserProfile, getUserProfile, submitScore, submitDailyScore, saveAchievements } from '../services/leaderboard';
 import { getDailyChallengeId } from '../config/dailyChallenge';
 
 const STORAGE_KEY = 'oneWayOut_stats';

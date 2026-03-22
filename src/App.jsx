@@ -7,7 +7,6 @@ import { StartScreen } from './components/StartScreen';
 import { GameScreen } from './components/GameScreen';
 import { GameOverScreen } from './components/GameOverScreen';
 import { AchievementPopup } from './components/AchievementPopup';
-import { StatsDialog } from './components/StatsDialog';
 import { testFirebaseConnection } from './services/leaderboard';
 import { initTheme } from './config/themes';
 import { setGlobalVolume } from './hooks/useSound';
@@ -29,26 +28,18 @@ function App() {
   } = useStats(user);
   const [showDeathScreen, setShowDeathScreen] = useState(false);
   const [gameRecorded, setGameRecorded] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showPractice, setShowPractice] = useState(false);
-  const [showCredits, setShowCredits] = useState(false);
   
   // Initialize theme and (optionally) test Firebase on app load
   useEffect(() => {
     initTheme();
+    if (stats.preferences?.volume !== undefined) {
+      setGlobalVolume(stats.preferences.volume);
+    }
     const enableTest = import.meta.env.DEV && import.meta.env.VITE_ENABLE_FIREBASE_TEST === 'true';
     if (enableTest) {
       testFirebaseConnection();
     }
   }, []);
-
-  useEffect(() => {
-    const currentVolume = stats.preferences?.volume;
-    if (currentVolume !== undefined) {
-      setGlobalVolume(currentVolume);
-    }
-  }, [stats.preferences?.volume]);
   
   const {
     gameState,
@@ -63,13 +54,13 @@ function App() {
     isFlashing,
     isPowerUpShaking,
     isPowerUpFlashing,
-    isLevelTransitioning,
     timeLeft,
     maxTime,
     combo,
     maxCombo,
     wpm,
     accuracy,
+    totalErrors,
     perfectStreak,
     bestScore,
     handleType,
@@ -81,6 +72,7 @@ function App() {
     activePowerUps,
     currentLevelPowerUp,
     streakMultiplier,
+    timeSurvived,
     selectedTheme,
     setSelectedTheme,
     isPaused,
@@ -94,8 +86,7 @@ function App() {
     stats.recentlyUsedSentences || [],
     stats.preferences?.personalization?.useName 
       ? (user?.displayName || stats.preferences?.guestName || 'Player') 
-      : null,
-    stats.preferences?.favoriteThemes || []
+      : null
   );
 
   // Mode specific ambience and button clicks
@@ -103,7 +94,7 @@ function App() {
     if (gameState === 'playing') {
       sound.playModeAmbience(gameMode);
     }
-  }, [gameState, gameMode, sound]);
+  }, [gameState, gameMode]);
 
   useEffect(() => {
     const handleGlobalClick = () => {
@@ -137,7 +128,7 @@ function App() {
     } else if (gameState === 'playing') {
       setGameRecorded(false);
     }
-  }, [gameState, gameRecorded, recordGame, recordEasterEgg, level, wpm, accuracy, maxCombo, difficulty, perfectStreak, gameMode, currentStoryId, isStoryComplete, sentencesUsed]);
+  }, [gameState, gameRecorded, recordGame, recordEasterEgg, level, wpm, maxCombo, difficulty, perfectStreak, gameMode, currentStoryId, isStoryComplete]);
 
   // Delay showing game over screen for death animation
   useEffect(() => {
@@ -200,59 +191,11 @@ function App() {
           updatePreference={updatePreference}
           updatePersonalization={updatePersonalization}
           toggleFavoriteTheme={toggleFavoriteTheme}
-          onOpenStats={() => setShowStats(true)}
-          onOpenSettings={() => setShowSettings(true)}
-          onOpenPractice={() => setShowPractice(true)}
-          onOpenLeaderboard={() => {}} // Handle separately if needed
         />
-        
-        {/* Settings Dialog modal */}
-        {showSettings && (
-          <SettingsDialog
-            onClose={() => setShowSettings(false)}
-            stats={stats}
-            user={user}
-            onSignOut={signOut}
-            selectedTheme={selectedTheme}
-            onThemeChange={setSelectedTheme}
-            updatePreference={updatePreference}
-            updatePersonalization={updatePersonalization}
-            toggleFavoriteTheme={toggleFavoriteTheme}
-            onOpenPractice={() => setShowPractice(true)}
-            onOpenCredits={() => setShowCredits(true)}
-            onOpenStats={() => setShowStats(true)}
-          />
-        )}
-
-        {/* Practice Mode modal */}
-        {showPractice && (
-          <PracticeMode
-            onClose={() => setShowPractice(false)}
-            onRecordPractice={recordPractice}
-          />
-        )}
-
-        {/* Credits Dialog modal */}
-        {showCredits && (
-          <CreditsDialog
-            onClose={() => setShowCredits(false)}
-          />
-        )}
-
         <AchievementPopup 
           achievements={newAchievements} 
           onDone={clearNewAchievements}
         />
-
-        {/* Stats Dialog modal */}
-        {showStats && (
-          <StatsDialog
-            stats={stats}
-            user={user}
-            onClose={() => setShowStats(false)}
-            readOnly={false}
-          />
-        )}
       </>
     );
   }
@@ -271,7 +214,6 @@ function App() {
           isFlashing={false}
           isPowerUpShaking={false}
           isPowerUpFlashing={false}
-          isLevelTransitioning={false}
           timeLeft={0}
           maxTime={maxTime}
           combo={combo}
@@ -280,6 +222,7 @@ function App() {
           isGameOver={true}
           onType={() => {}}
           streakMultiplier={streakMultiplier}
+          timeSurvived={timeSurvived}
           gameMode={gameMode}
           activePowerUps={activePowerUps}
           currentLevelPowerUp={currentLevelPowerUp}
@@ -302,6 +245,8 @@ function App() {
           difficulty={difficulty}
           gameMode={gameMode}
           onRestart={handleRestart}
+          user={user}
+          timeSurvived={timeSurvived}
           perfectStreak={perfectStreak}
         />
         <AchievementPopup 
@@ -325,7 +270,6 @@ function App() {
         isFlashing={isFlashing}
         isPowerUpShaking={isPowerUpShaking}
         isPowerUpFlashing={isPowerUpFlashing}
-        isLevelTransitioning={isLevelTransitioning}
         timeLeft={timeLeft}
         maxTime={maxTime}
         combo={combo}
@@ -334,6 +278,7 @@ function App() {
         isGameOver={false}
         onType={handleType}
         streakMultiplier={streakMultiplier}
+        timeSurvived={timeSurvived}
         gameMode={gameMode}
         activePowerUps={activePowerUps}
         currentLevelPowerUp={currentLevelPowerUp}

@@ -1,4 +1,4 @@
-export function AuthButton({ user, onSignIn, loading }) {
+export function AuthButton({ user, onSignIn, onSignOut, loading }) {
   if (loading) {
     return (
       <div className="text-[var(--color-bone)]/40 text-sm">

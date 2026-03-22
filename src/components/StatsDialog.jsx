@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { ACHIEVEMENTS } from '../config/achievements';
 
 
-export function StatsDialog({ stats, onClose, user, readOnly }) {
-  const [showChart] = useState(true);
+export function StatsDialog({ stats, onClose, user }) {
+
+  const [showChart, setShowChart] = useState(true);
 
   // Calculate derived stats
   const totalGames = stats.totalGames || 0;

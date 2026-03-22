@@ -16,10 +16,9 @@ export function GameScreen({
   isFlashing,
   isPowerUpShaking,
   isPowerUpFlashing,
-  isLevelTransitioning,
-  combo,
   timeLeft,
   maxTime,
+  combo,
   wpm,
   difficulty,
   isGameOver,
@@ -104,18 +103,10 @@ export function GameScreen({
   const decayOpacity = 1 - (mistakes * 0.06);
   const decayFilter = mistakes > 2 ? `blur(${(mistakes - 2) * 0.2}px)` : 'none';
 
-  const comboIntensity = Math.min(1, combo / 50);
-  const heatStyle = combo > 10 ? {
-    boxShadow: `inset 0 0 ${comboIntensity * 100}px rgba(255, 0, 0, ${comboIntensity * 0.2})`,
-    filter: `contrast(${1 + comboIntensity * 0.2}) brightness(${1 + comboIntensity * 0.1})`,
-    transition: 'all 0.3s ease'
-  } : {};
-
   return (
     <div 
-      className={`min-h-screen flex flex-col p-4 md:p-12 cursor-text ${isFlashing ? 'flash-mistake' : ''} ${isPowerUpFlashing ? 'flash-powerup' : ''} ${isLevelTransitioning ? 'animate-pulse scale-105 blur-[1px]' : ''}`}
+      className={`min-h-screen flex flex-col p-4 md:p-12 cursor-text ${isFlashing ? 'flash-mistake' : ''} ${isPowerUpFlashing ? 'flash-powerup' : ''}`}
       onClick={handleClick}
-      style={heatStyle}
     >
       {/* Blurred container for game elements during pause */}
       <div 

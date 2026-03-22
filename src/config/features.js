@@ -27,18 +27,18 @@ export const FEATURES = {
  * Hook to check if a feature is enabled
  */
 export function useFeatureFlag(flagName) {
+  // Allow environment variable overrides for staging/testing
+  const envOverride = import.meta.env?.VITE_FEATURE_?.toLowerCase?.() === 'true';
+  
   // Check if flag exists
   if (!(flagName in FEATURES)) {
     console.warn(`Unknown feature flag: ${flagName}`);
     return false;
   }
   
-  // Environment variable takes precedence if it exists
-  const envValue = import.meta.env?.[`VITE_FEATURE_${flagName.toUpperCase()}`]?.toLowerCase?.();
-  if (envValue === 'true') {
+  // Environment variable takes precedence
+  if (import.meta.env?.VITE_FEATURE_?.toLowerCase?.() === 'true') {
     return true;
-  } else if (envValue === 'false') {
-    return false;
   }
   
   return FEATURES[flagName];

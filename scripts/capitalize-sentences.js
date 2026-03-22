@@ -3,7 +3,6 @@
  * Run with: node scripts/capitalize-sentences.js
  */
 
-/* global process */
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 

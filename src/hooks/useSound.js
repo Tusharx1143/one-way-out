@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect, useState } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 let audioContext = null;
 let globalVolume = 0.5;
@@ -233,7 +233,7 @@ function playStatic(duration = 0.3, volume = 0.05) {
 export function useSound() {
   const heartbeatRef = useRef(null);
   const heartbeatSpeed = useRef(1200);
-  const [volume, setVolume] = useState(globalVolume);
+  const ambienceRef = useRef(null);
 
   // Subtle key click - softer, creepier
   const playKeystroke = useCallback(() => {
