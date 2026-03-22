@@ -14,7 +14,8 @@ export function SettingsDialog({
   updatePersonalization, 
   toggleFavoriteTheme,
   onOpenPractice,
-  onOpenCredits
+  onOpenCredits,
+  onOpenStats
 }) {
   const [activeTab, setActiveTab] = useState('themes'); // themes, personalization, audio
   const [guestName, setGuestName] = useState('');
@@ -287,6 +288,16 @@ export function SettingsDialog({
 
         {/* Home Page Features Moved Here */}
         <div className="space-y-3 pt-6 border-t border-[var(--color-bone)]/10">
+          <button
+            onClick={() => {
+              onClose();
+              onOpenStats();
+            }}
+            className="w-full flex items-center justify-center gap-2 py-3 px-8 border border-[var(--color-bone)]/30 text-[var(--color-bone)]/60 hover:border-[var(--color-bone)]/60 hover:text-[var(--color-bone)] transition-all text-xs font-bold tracking-widest uppercase"
+          >
+            📊 View Your Stats
+          </button>
+
           <button
             onClick={() => {
               onClose();

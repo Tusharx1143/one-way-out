@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import sentences from '../data/sentences.json';
 
 export function PracticeMode({ onClose, onRecordPractice }) {
-  const [level, setLevel] = useState(1);
   const [typed, setTyped] = useState('');
   const [currentSentence, setCurrentSentence] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
@@ -17,7 +16,7 @@ export function PracticeMode({ onClose, onRecordPractice }) {
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' or specific level
 
   // Get random sentence without repeating last one
-  const getRandomSentence = () => {
+  const getRandomSentence = useCallback(() => {
     const filtered = selectedLevel === 'all' 
       ? sentences 
       : sentences.filter(s => s.level === parseInt(selectedLevel));
@@ -31,20 +30,20 @@ export function PracticeMode({ onClose, onRecordPractice }) {
     
     setLastSentenceIndex(randomIndex);
     return filtered[randomIndex];
-  };
+  }, [selectedLevel, lastSentenceIndex]);
 
   // Load first sentence
   useEffect(() => {
     setCurrentSentence(getRandomSentence());
-  }, [selectedLevel]);
+  }, [selectedLevel, getRandomSentence]);
 
   // Calculate accuracy
-  const calculateAccuracy = (typed, original) => {
+  const calculateAccuracy = (typedValue, original) => {
     let correct = 0;
-    const minLength = Math.min(typed.length, original.length);
+    const minLength = Math.min(typedValue.length, original.length);
     
     for (let i = 0; i < minLength; i++) {
-      if (typed[i] === original[i]) correct++;
+      if (typedValue[i] === original[i]) correct++;
     }
     
     return Math.round((correct / original.length) * 100);
@@ -62,7 +61,7 @@ export function PracticeMode({ onClose, onRecordPractice }) {
   };
 
   // Handle next sentence
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (!currentSentence) return;
 
     const acc = calculateAccuracy(typed, currentSentence.text);
@@ -77,7 +76,7 @@ export function PracticeMode({ onClose, onRecordPractice }) {
     setTyped('');
     setAccuracy(null);
     setCurrentSentence(getRandomSentence());
-  };
+  }, [currentSentence, typed, getRandomSentence]);
 
   // Handle key press
   useEffect(() => {
@@ -100,7 +99,7 @@ export function PracticeMode({ onClose, onRecordPractice }) {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [typed, currentSentence]);
+  }, [handleNext]);
 
   // Record practice stats before closing
   const handleClose = () => {

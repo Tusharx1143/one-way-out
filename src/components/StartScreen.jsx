@@ -14,21 +14,58 @@ const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft'
 const SECRET_CREATORS = ['tusharx1143', 'shubhamtaral'];
 const SECRET_JUMPSCARE = 'jumpscare';
 
-export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStory, allStories, stats, user, onSignIn, onSignOut, authLoading, selectedTheme, onThemeChange, onRecordPractice, onRecordKonami, onRecordEasterEgg, updatePreference, updatePersonalization, toggleFavoriteTheme }) {
+export function StartScreen({ 
+  onStart, 
+  onStartDaily, 
+  onStartEndless, 
+  onStartStory, 
+  allStories, 
+  stats, 
+  user, 
+  onSignIn, 
+  onSignOut, 
+  authLoading, 
+  onRecordKonami, 
+  onRecordEasterEgg, 
+  onOpenStats, 
+  onOpenSettings 
+}) {
   const [selectedDifficulty, setSelectedDifficulty] = useState('normal');
   const [flicker, setFlicker] = useState(false);
   const [ready, setReady] = useState(false);
   const [showMode, setShowMode] = useState('main');
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [showPractice, setShowPractice] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showCredits, setShowCredits] = useState(false);
+  const [konamiIndex, setKonamiIndex] = useState(0);
+  const [capsLockActive, setCapsLockActive] = useState(false);
 
   const dailyPlayed = hasDailyBeenPlayed();
   const dailyBest = getDailyBest();
-  const [konamiIndex, setKonamiIndex] = useState(0);
-  const [typedBuffer, setTypedBuffer] = useState('');
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const key = e.key.toLowerCase();
+      if (showMode === 'main') {
+        if (key === 'p') setShowMode('difficulty');
+        if (key === 'd') !dailyPlayed && onStartDaily();
+        if (key === 'e') onStartEndless('normal');
+        if (key === 's') setShowMode('stories');
+        if (key === 'l') setShowLeaderboard(true);
+        if (key === 'g') onOpenSettings();
+        if (key === 't') onOpenStats();
+      } else if (showMode === 'difficulty') {
+        if (key === 'escape') setShowMode('main');
+        if (key === '1') onStart('casual');
+        if (key === '2') onStart('normal');
+        if (key === '3') onStart('nightmare');
+      } else if (showMode === 'stories') {
+        if (key === 'escape') setShowMode('main');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showMode, onStart, onStartDaily, onStartEndless, dailyPlayed, onOpenSettings, onOpenStats]);
 
   useEffect(() => {
     const timeout = setTimeout(() => setReady(true), 500);
@@ -58,7 +95,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
       }
 
       // Konami Code logic
-      if (showMode === 'main' && !showLeaderboard && !showPractice && !showStats && !showCredits) {
+      if (showMode === 'main' && !showLeaderboard) {
         if (e.key === KONAMI_CODE[konamiIndex]) {
           const newIndex = konamiIndex + 1;
           if (newIndex === KONAMI_CODE.length) {
@@ -79,7 +116,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
       }
 
       // Word tracking for other easter eggs
-      if (showMode === 'main' && !showLeaderboard && !showPractice && !showStats && e.key.length === 1) {
+      if (showMode === 'main' && !showLeaderboard && e.key.length === 1) {
         setTypedBuffer(prev => {
           const newBuffer = (prev + e.key.toLowerCase()).slice(-20); // Keep last 20 chars
 
@@ -104,7 +141,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
 
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onStart, selectedDifficulty, ready, showMode, showLeaderboard, showPractice, showStats, showCredits, konamiIndex, onRecordKonami, onRecordEasterEgg]);
+  }, [onStart, selectedDifficulty, ready, showMode, showLeaderboard, konamiIndex, onRecordKonami, onRecordEasterEgg]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -113,8 +150,6 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
     }, 3000 + Math.random() * 2000);
     return () => clearInterval(interval);
   }, []);
-
-  const [capsLockActive, setCapsLockActive] = useState(false);
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -206,7 +241,6 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
             )}
           </button>
 
-          {/* Leaderboard button */}
           <button
             onClick={() => setShowLeaderboard(true)}
             className="py-3 px-8 border border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10 transition-all text-sm tracking-wider uppercase"
@@ -216,7 +250,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
 
           {stats && stats.totalGames > 0 && (
             <button
-              onClick={() => setShowStats(true)}
+              onClick={onOpenStats}
               className="py-3 px-8 border border-[var(--color-bone)]/30 text-[var(--color-bone)]/60 hover:border-[var(--color-bone)]/60 hover:text-[var(--color-bone)] transition-all text-sm tracking-wider uppercase"
             >
               📊 YOUR STATS
@@ -224,7 +258,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
           )}
 
           <button
-            onClick={() => setShowSettings(true)}
+            onClick={onOpenSettings}
             className="py-3 px-8 border border-[var(--color-bone)]/30 text-[var(--color-bone)]/60 hover:border-[var(--color-bone)]/60 hover:text-[var(--color-bone)] transition-all text-sm tracking-wider uppercase"
           >
             ⚙️ SETTINGS
@@ -328,68 +362,6 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
         </>
       )}
 
-      {showMode === 'stats' && stats && (
-        <div className="w-full max-w-md">
-          <div className="bg-[#111] border border-[var(--color-bone)]/20 rounded-lg p-6 mb-4">
-            <h2 className="text-[var(--color-bone)] font-bold text-lg mb-4">Your Stats</h2>
-
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-[var(--color-bone)]">{stats.totalGames}</div>
-                <div className="text-xs text-[var(--color-bone)]/50">Games Played</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-400">{stats.bestLevel}</div>
-                <div className="text-xs text-[var(--color-bone)]/50">Best Level</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-yellow-400">{stats.bestWpm}</div>
-                <div className="text-xs text-[var(--color-bone)]/50">Best WPM</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-orange-400">{stats.bestCombo}x</div>
-                <div className="text-xs text-[var(--color-bone)]/50">Best Combo</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#111] border border-[var(--color-bone)]/20 rounded-lg p-6 mb-4">
-            <h2 className="text-[var(--color-bone)] font-bold text-lg mb-4">
-              Achievements ({stats.unlockedAchievements?.length || 0})
-            </h2>
-
-            <div className="flex flex-wrap gap-2">
-              {Object.values(ACHIEVEMENTS).map((achievement) => {
-                const isUnlocked = stats.unlockedAchievements?.includes(achievement.id);
-                return (
-                  <div
-                    key={achievement.id}
-                    className={`px-3 py-2 rounded text-sm transition-all duration-300 border ${
-                      isUnlocked
-                        ? "bg-[var(--color-bone)]/10 border-[var(--color-bone)]/20 text-[var(--color-bone)] opacity-100"
-                        : "bg-black/40 border-white/5 text-[var(--color-bone)]/20 grayscale opacity-40 hover:opacity-100 hover:grayscale-0"
-                    }`}
-                    title={achievement.description}
-                  >
-                    <span className={isUnlocked ? "" : "opacity-30"}>
-                      {achievement.icon}
-                    </span>{" "}
-                    {achievement.name}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <button
-            onClick={() => setShowMode('main')}
-            className="w-full py-3 text-[var(--color-bone)]/40 hover:text-[var(--color-bone)]/60 text-sm"
-          >
-            ← Back
-          </button>
-        </div>
-      )}
-
       {showMode === 'main' && (
         <div className="absolute bottom-8 text-[var(--color-bone)]/20 text-xs text-center">
           <div>type fast • survive long • don't die</div>
@@ -402,46 +374,6 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
         <Leaderboard
           onClose={() => setShowLeaderboard(false)}
           currentUserId={user?.uid}
-        />
-      )}
-
-      {/* Practice Mode modal */}
-      {showPractice && (
-        <PracticeMode
-          onClose={() => setShowPractice(false)}
-          onRecordPractice={onRecordPractice}
-        />
-      )}
-
-      {/* Stats Dialog modal */}
-      {showStats && (
-        <StatsDialog
-          stats={stats}
-          user={user}
-          onClose={() => setShowStats(false)}
-        />
-      )}
-
-      {/* Settings Dialog modal */}
-      {showSettings && (
-        <SettingsDialog
-          onClose={() => setShowSettings(false)}
-          stats={stats}
-          user={user}
-          onSignOut={onSignOut}
-          selectedTheme={selectedTheme}
-          onThemeChange={onThemeChange}
-          updatePreference={updatePreference}
-          updatePersonalization={updatePersonalization}
-          toggleFavoriteTheme={toggleFavoriteTheme}
-          onOpenPractice={() => setShowPractice(true)}
-          onOpenCredits={() => setShowCredits(true)}
-        />
-      )}
-
-      {showCredits && (
-        <CreditsDialog
-          onClose={() => setShowCredits(false)}
         />
       )}
     </div>

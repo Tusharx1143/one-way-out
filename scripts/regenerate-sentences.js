@@ -3,6 +3,7 @@
  * Run with: node scripts/regenerate-sentences.js
  */
 
+/* global process */
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { generateVariations, generateMetadata } from '../src/utils/variations.js';

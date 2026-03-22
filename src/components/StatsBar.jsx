@@ -1,4 +1,16 @@
-export function StatsBar({ level, mistakes, maxMistakes, bestScore, timeLeft, maxTime, combo, wpm, difficulty, streakMultiplier, timeSurvived, gameMode, endlessLives }) {
+export function StatsBar({ 
+  level, 
+  mistakes, 
+  maxMistakes, 
+  bestScore, 
+  timeLeft, 
+  maxTime, 
+  combo, 
+  wpm, 
+  streakMultiplier,
+  gameMode,
+  endlessLives
+}) {
   const timePercent = (timeLeft / maxTime) * 100;
   const isLowTime = timeLeft <= 3;
   const isEndless = gameMode === 'endless';
@@ -32,9 +44,9 @@ export function StatsBar({ level, mistakes, maxMistakes, bestScore, timeLeft, ma
         {/* Left side - Level, Best, Combo */}
         <div className="flex gap-3 md:gap-6">
           <span>
-            {isEndless ? 'SENTENCES' : (gameMode === 'survival' ? 'SURVIVED' : 'LVL')} 
+            {isEndless ? 'SENTENCES' : 'LVL'} 
             <span className="text-[var(--color-bone)] font-bold">
-              {isEndless ? level : (gameMode === 'survival' ? timeSurvived + 's' : level)}
+              {level}
             </span>
           </span>
           {!isEndless && <span>BEST <span className="text-green-400 font-bold">{bestScore}</span></span>}

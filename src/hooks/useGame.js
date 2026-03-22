@@ -8,7 +8,7 @@ import { POWER_UPS, generateRandomPowerUp } from '../game/logic/powerUps';
 import { computeWpm } from '../game/logic/wpm';
 import { computeStreakMultiplier } from '../game/logic/streakMultiplier';
 
-export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = null) {
+export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = null, favoriteThemes = []) {
   const { 
     playKeystroke, playError, playSuccess, playGameOver, 
     playTick, playWarningTick, startHeartbeat, updateHeartbeat, 
@@ -24,6 +24,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
   const [typed, setTyped] = useState('');
   const [isShaking, setIsShaking] = useState(false);
   const [isFlashing, setIsFlashing] = useState(false);
+  const [isLevelTransitioning, setIsLevelTransitioning] = useState(false);
   const [isPowerUpShaking, setIsPowerUpShaking] = useState(false);
   const [isPowerUpFlashing, setIsPowerUpFlashing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
@@ -45,9 +46,6 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
   
   // New: Streak Multiplier
   const [streakMultiplier, setStreakMultiplier] = useState(1);
-  
-  // New: Survival Mode
-  const [timeSurvived, setTimeSurvived] = useState(0);
   
   // New: Cosmetics
   const [selectedTheme, setSelectedTheme] = useState(() => {
@@ -78,7 +76,6 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
   const slowMotionRef = useRef(false);
   const doublePointsRef = useRef(false);
   const isPausedRef = useRef(isPaused);
-  const survivalStartTimeRef = useRef(null);
   const gameStateRef = useRef(gameState);
   const sentencesUsedRef = useRef([]); // Track sentences used in current game
 
@@ -155,7 +152,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         return newTime;
       });
     }, 100);
-  }, [clearTimer, playTick, playWarningTick, gameMode]);
+  }, [clearTimer, playTick, playWarningTick, gameMode, stageWpms]);
 
   // Handle timer expiry
   useEffect(() => {
@@ -213,7 +210,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         doublePointsRef.current = false;
         setActivePowerUps(prev => prev.filter(p => p === POWER_UPS.SHIELD));
 
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, wpm, Math.random, null, recentlyUsedSentences, userName);
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, wpm, Math.random, null, recentlyUsedSentences, userName, favoriteThemes);
         lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
         // Track sentence for anti-repetition
@@ -230,7 +227,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         playStatic?.();
       }
     }
-  }, [timeLeft, gameState, totalMistakes, level, difficulty, gameMode, maxMistakes, wpm, clearTimer, startTimer, playError, playGameOver, updateHeartbeat, stopHeartbeat]);
+  }, [timeLeft, gameState, totalMistakes, level, difficulty, gameMode, maxMistakes, wpm, clearTimer, startTimer, playError, playGameOver, updateHeartbeat, stopHeartbeat, favoriteThemes, playGlitch, playStatic, recentlyUsedSentences, userName]);
 
   // Handle active power-ups
   useEffect(() => {
@@ -298,7 +295,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     setIsStoryComplete(false);
     setGameState('playing');
     
-    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName);
+    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName, favoriteThemes);
     lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
     sentencesUsedRef.current = [sentence.text]; // Initialize tracking
@@ -309,7 +306,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     startTimer(duration);
     playStatic?.();
     startHeartbeat?.(0);
-  }, [startTimer, startHeartbeat]);
+  }, [startTimer, startHeartbeat, recentlyUsedSentences, userName, favoriteThemes, playGlitch, playStatic]);
 
   const startDailyChallenge = useCallback(() => {
     setGameMode('daily');
@@ -373,7 +370,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     setIsStoryComplete(false);
     setGameState('playing');
     
-    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName);
+    const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName, favoriteThemes);
     lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
     sentencesUsedRef.current = [sentence.text]; // Initialize tracking
@@ -382,7 +379,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     // No timer for endless mode
     clearTimer();
     startHeartbeat?.(0);
-  }, [clearTimer, startHeartbeat]);
+  }, [clearTimer, startHeartbeat, recentlyUsedSentences, userName, favoriteThemes]);
 
   const startStoryMode = useCallback((storyId) => {
     const story = allStories.find(s => s.id === storyId);
@@ -494,6 +491,8 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         }
 
         setLevel(newLevel);
+        setIsLevelTransitioning(true);
+        setTimeout(() => setIsLevelTransitioning(false), 300);
         setTyped('');
         mistakesThisLevelRef.current = 0;
         levelCharsRef.current = 0;
@@ -507,7 +506,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         // Get current WPM for adaptive difficulty
         const currentWPM = wpm;
         const combinedHistory = [...(recentlyUsedSentences || []), ...(sentencesUsedRef.current || [])];
-        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, currentWPM, Math.random, null, combinedHistory, userName);
+        const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, currentWPM, Math.random, null, combinedHistory, userName, favoriteThemes);
         lastSentenceTextRef.current = sentence.text;
         setCurrentSentence(sentence.text);
         
@@ -613,7 +612,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         }
       }
     }
-  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
+  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer, favoriteThemes, recentlyUsedSentences, stageWpms, totalErrors, userName]);
 
   useEffect(() => {
     return () => {
@@ -635,6 +634,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     isFlashing,
     isPowerUpShaking,
     isPowerUpFlashing,
+    isLevelTransitioning,
     timeLeft,
     maxTime,
     combo,
@@ -654,7 +654,6 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     activePowerUps,
     currentLevelPowerUp,
     streakMultiplier,
-    timeSurvived,
     selectedTheme,
     setSelectedTheme,
     // New: Pause & Endless

@@ -3,6 +3,7 @@
  * Run after regenerate-sentences.js
  */
 
+/* global process */
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 
