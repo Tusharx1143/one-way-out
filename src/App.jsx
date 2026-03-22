@@ -128,7 +128,7 @@ function App() {
     } else if (gameState === 'playing') {
       setGameRecorded(false);
     }
-  }, [gameState, gameRecorded, recordGame, recordEasterEgg, level, wpm, maxCombo, difficulty, perfectStreak, gameMode, currentStoryId, isStoryComplete]);
+  }, [gameState, gameRecorded, recordGame, recordEasterEgg, level, wpm, accuracy, maxCombo, difficulty, perfectStreak, gameMode, currentStoryId, isStoryComplete]);
 
   // Delay showing game over screen for death animation
   useEffect(() => {
@@ -246,7 +246,6 @@ function App() {
           gameMode={gameMode}
           onRestart={handleRestart}
           user={user}
-          timeSurvived={timeSurvived}
           perfectStreak={perfectStreak}
         />
         <AchievementPopup 
@@ -278,7 +277,6 @@ function App() {
         isGameOver={false}
         onType={handleType}
         streakMultiplier={streakMultiplier}
-        timeSurvived={timeSurvived}
         gameMode={gameMode}
         activePowerUps={activePowerUps}
         currentLevelPowerUp={currentLevelPowerUp}

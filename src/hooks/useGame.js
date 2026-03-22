@@ -46,8 +46,6 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
   // New: Streak Multiplier
   const [streakMultiplier, setStreakMultiplier] = useState(1);
   
-  // New: Survival Mode
-  const [timeSurvived, setTimeSurvived] = useState(0);
   
   // New: Cosmetics
   const [selectedTheme, setSelectedTheme] = useState(() => {
@@ -78,7 +76,6 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
   const slowMotionRef = useRef(false);
   const doublePointsRef = useRef(false);
   const isPausedRef = useRef(isPaused);
-  const survivalStartTimeRef = useRef(null);
   const gameStateRef = useRef(gameState);
   const sentencesUsedRef = useRef([]); // Track sentences used in current game
 
@@ -155,7 +152,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         return newTime;
       });
     }, 100);
-  }, [clearTimer, playTick, playWarningTick, gameMode]);
+  }, [clearTimer, playTick, playWarningTick, gameMode, stageWpms]);
 
   // Handle timer expiry
   useEffect(() => {
@@ -613,7 +610,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         }
       }
     }
-  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
+  }, [gameState, currentSentence, typed, level, difficulty, gameMode, totalMistakes, combo, maxMistakes, bestScore, wpm, activePowerUps, currentLevelPowerUp, isPaused, endlessLives, stageWpms, totalErrors, playKeystroke, playError, playSuccess, playGameOver, updateHeartbeat, stopHeartbeat, clearTimer, startTimer]);
 
   useEffect(() => {
     return () => {
@@ -654,7 +651,6 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     activePowerUps,
     currentLevelPowerUp,
     streakMultiplier,
-    timeSurvived,
     selectedTheme,
     setSelectedTheme,
     // New: Pause & Endless
