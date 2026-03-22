@@ -73,7 +73,7 @@ jobs:
     permissions:
       contents: read
 
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/Release-'))
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/Release-'))
 
     steps:
       - name: 🛒 Checkout
@@ -114,7 +114,7 @@ jobs:
     permissions:
       contents: read
 
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/Release-')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v6
@@ -154,7 +154,7 @@ jobs:
     permissions:
       contents: read
 
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/Release-')
 
     steps:
       - uses: actions/checkout@v6
