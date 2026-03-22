@@ -166,7 +166,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
             onClick={() => setShowMode('endless')}
             className="py-4 px-8 border-2 border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-[var(--color-void)] transition-all font-bold tracking-wider text-lg"
           >
-            ♾️ ENDLESS MODE
+            ♾️ TIMELESS MODE
           </button>
 
           <button
@@ -266,7 +266,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
       {showMode === 'endless' && (
         <>
           <div className="mb-6 text-center">
-            <h2 className="text-2xl text-purple-500 font-bold mb-2">ENDLESS MODE</h2>
+            <h2 className="text-2xl text-purple-500 font-bold mb-2">TIMELESS MODE</h2>
             <p className="text-[var(--color-bone)]/50 text-sm">
               No timer. 10 lives. Type forever.
             </p>
@@ -393,6 +393,10 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
           {!user && <div className="mt-2">Sign in to save progress & compete on leaderboard</div>}
         </div>
       )}
+
+      <div className="absolute bottom-4 right-4 text-[var(--color-bone)]/20 text-[10px] tracking-widest">
+        v1.0.0
+      </div>
 
       {/* Leaderboard modal */}
       {showLeaderboard && (
