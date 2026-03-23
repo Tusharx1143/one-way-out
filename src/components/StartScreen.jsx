@@ -390,7 +390,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
       )}
 
       <div className="absolute bottom-4 right-4 text-[var(--color-bone)]/20 text-[10px] tracking-widest">
-        v1.0.0
+        v{pkg.version}
       </div>
 
       {/* Leaderboard modal */}
