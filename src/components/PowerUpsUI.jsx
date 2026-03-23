@@ -11,8 +11,8 @@ export function PowerUpsUI({ activePowerUps, currentLevelPowerUp }) {
         return '💚';
       case POWER_UPS.SLOW_MOTION:
         return '⏳';
-      case POWER_UPS.DOUBLE_POINTS:
-        return '⚡';
+      case POWER_UPS.PHANTOM_KEYS:
+        return '👻';
       default:
         return '✨';
     }
@@ -28,8 +28,8 @@ export function PowerUpsUI({ activePowerUps, currentLevelPowerUp }) {
         return 'Extra Life';
       case POWER_UPS.SLOW_MOTION:
         return 'Slow Motion';
-      case POWER_UPS.DOUBLE_POINTS:
-        return 'Double Points';
+      case POWER_UPS.PHANTOM_KEYS:
+        return 'Phantom Keys';
       default:
         return 'Power-up';
     }
@@ -45,8 +45,8 @@ export function PowerUpsUI({ activePowerUps, currentLevelPowerUp }) {
         return 'text-green-400 animate-pulse';
       case POWER_UPS.SLOW_MOTION:
         return 'text-purple-400 animate-pulse';
-      case POWER_UPS.DOUBLE_POINTS:
-        return 'text-red-400 animate-pulse';
+      case POWER_UPS.PHANTOM_KEYS:
+        return 'text-violet-400 animate-pulse';
       default:
         return 'text-cyan-400 animate-pulse';
     }

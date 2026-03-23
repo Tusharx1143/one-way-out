@@ -3,7 +3,7 @@ export const POWER_UPS = {
   SHIELD: 'shield', // Next mistake doesn't count
   EXTRA_LIFE: 'extra_life', // Regain a life
   SLOW_MOTION: 'slow_motion', // Timer runs at half speed
-  DOUBLE_POINTS: 'double_points', // Multiplier is doubled
+  PHANTOM_KEYS: 'phantom_keys', // Typos don't register for 10 seconds
 };
 
 export const POWER_UP_SPAWN_CHANCE = 0.25; // 25% chance per sentence
