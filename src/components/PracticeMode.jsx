@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import sentences from '../data/sentences.json';
 
 export function PracticeMode({ onClose, onRecordPractice }) {
@@ -12,26 +12,25 @@ export function PracticeMode({ onClose, onRecordPractice }) {
     avgAccuracy: 0,
   });
   const [capsLockActive, setCapsLockActive] = useState(false);
-  const [lastSentenceIndex, setLastSentenceIndex] = useState(null);
+  const lastSentenceIndexRef = useRef(null);
   const [selectedLevel, setSelectedLevel] = useState('all'); // 'all' or specific level
 
   // Get random sentence without repeating last one
   const getRandomSentence = useCallback(() => {
-    const filtered = selectedLevel === 'all' 
-      ? sentences 
+    const filtered = selectedLevel === 'all'
+      ? sentences
       : sentences.filter(s => s.level === parseInt(selectedLevel));
-    
+
     if (filtered.length === 0) return null;
-    
+
     let randomIndex;
-    const currentLastIndex = lastSentenceIndex;
     do {
       randomIndex = Math.floor(Math.random() * filtered.length);
-    } while (randomIndex === currentLastIndex && filtered.length > 1);
-    
-    setLastSentenceIndex(randomIndex);
+    } while (randomIndex === lastSentenceIndexRef.current && filtered.length > 1);
+
+    lastSentenceIndexRef.current = randomIndex;
     return filtered[randomIndex];
-  }, [selectedLevel, lastSentenceIndex]);
+  }, [selectedLevel]);
 
   // Load first sentence
   useEffect(() => {
