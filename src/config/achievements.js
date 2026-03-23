@@ -160,13 +160,6 @@ export const ACHIEVEMENTS = {
     icon: '💀',
     check: (stats) => stats.difficulty === 'nightmare' && stats.level >= 30,
   },
-  casualMaster: {
-    id: 'casualMaster',
-    name: 'Casual Master',
-    description: 'Reach level 30 on Casual',
-    icon: '🎮',
-    check: (stats) => stats.difficulty === 'casual' && stats.level >= 30,
-  },
 
   // Game Mode achievements
   dailyPlayer: {
