@@ -53,6 +53,7 @@ export const THEMES = {
       void: '#001a33',
     },
     unlockedBy: 'addict', // Play 40 games
+    lockedMessage: 'Reach Level 40',
   },
   matrix: {
     id: 'matrix',
