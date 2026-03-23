@@ -34,7 +34,7 @@ function loadLocalStats() {
       personalization: {
         useName: true,
         useLocation: true,
-        adaptiveDifficulty: true,
+        adaptiveDifficulty: false,
       },
     },
   };
@@ -83,7 +83,7 @@ export function useStats(user) {
               personalization: {
                 useName: false,
                 useLocation: false,
-                adaptiveDifficulty: true,
+                adaptiveDifficulty: false,
               },
             },
             lastPlayed: Date.now(),
@@ -331,7 +331,7 @@ export function useStats(user) {
             personalization: {
               useName: false,
               useLocation: false,
-              adaptiveDifficulty: true,
+              adaptiveDifficulty: false,
             },
           }),
           [key]: value,
@@ -352,7 +352,7 @@ export function useStats(user) {
             ...(prev.preferences?.personalization || {
               useName: false,
               useLocation: false,
-              adaptiveDifficulty: true,
+              adaptiveDifficulty: false,
             }),
             [personalizationKey]: value,
           },
