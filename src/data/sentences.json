@@ -151,6 +151,96 @@
     "lengthCategory": "short"
   },
   {
+    "level": 1,
+    "text": "Stay still.",
+    "wordCount": 2,
+    "firstWord": "stay",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Voice fading.",
+    "wordCount": 2,
+    "firstWord": "voice",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Window cracked.",
+    "wordCount": 2,
+    "firstWord": "window",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Breath held.",
+    "wordCount": 2,
+    "firstWord": "breath",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Clock wrong.",
+    "wordCount": 2,
+    "firstWord": "clock",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Floor cold.",
+    "wordCount": 2,
+    "firstWord": "floor",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Wall wet.",
+    "wordCount": 2,
+    "firstWord": "wall",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "It moved.",
+    "wordCount": 2,
+    "firstWord": "it",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 1,
+    "text": "Eyes open.",
+    "wordCount": 2,
+    "firstWord": "eyes",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
     "level": 2,
     "text": "I saw it.",
     "wordCount": 3,
@@ -297,6 +387,106 @@
     "text": "Keys moved.",
     "wordCount": 2,
     "firstWord": "keys",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Lights went out.",
+    "wordCount": 3,
+    "firstWord": "lights",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Stay very still.",
+    "wordCount": 3,
+    "firstWord": "stay",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Voice in walls.",
+    "wordCount": 3,
+    "firstWord": "voice",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Photo was wrong.",
+    "wordCount": 3,
+    "firstWord": "photo",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Clock moved back.",
+    "wordCount": 3,
+    "firstWord": "clock",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "I heard scratching.",
+    "wordCount": 3,
+    "firstWord": "i",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Name on wall.",
+    "wordCount": 3,
+    "firstWord": "name",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Eyes in dark.",
+    "wordCount": 3,
+    "firstWord": "eyes",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Screen turned on.",
+    "wordCount": 3,
+    "firstWord": "screen",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 2,
+    "text": "Not alone here.",
+    "wordCount": 3,
+    "firstWord": "not",
     "themes": [
       "general"
     ],
@@ -453,6 +643,106 @@
       "general"
     ],
     "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "Hands not my own.",
+    "wordCount": 4,
+    "firstWord": "hands",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "Something knocked twice.",
+    "wordCount": 3,
+    "firstWord": "something",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "The candle went out.",
+    "wordCount": 5,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 3,
+    "text": "I heard it breathe.",
+    "wordCount": 4,
+    "firstWord": "i",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "Signal lost at midnight.",
+    "wordCount": 4,
+    "firstWord": "signal",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "Pages turned on their own.",
+    "wordCount": 5,
+    "firstWord": "pages",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 3,
+    "text": "It smells like rot.",
+    "wordCount": 4,
+    "firstWord": "it",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "Staircase creaks again.",
+    "wordCount": 3,
+    "firstWord": "staircase",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "Wrong room. Wrong house.",
+    "wordCount": 4,
+    "firstWord": "wrong",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 3,
+    "text": "The photo was recent.",
+    "wordCount": 5,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "medium"
   },
   {
     "level": 4,
@@ -619,6 +909,106 @@
     "lengthCategory": "short"
   },
   {
+    "level": 4,
+    "text": "I saw my own grave.",
+    "wordCount": 5,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 4,
+    "text": "The dog stared at nothing.",
+    "wordCount": 5,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 4,
+    "text": "Someone rearranged my photos.",
+    "wordCount": 4,
+    "firstWord": "someone",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 4,
+    "text": "My shadow moved alone.",
+    "wordCount": 4,
+    "firstWord": "my",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 4,
+    "text": "I don't recognize this street.",
+    "wordCount": 5,
+    "firstWord": "i",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 4,
+    "text": "My phone logged in twice.",
+    "wordCount": 5,
+    "firstWord": "my",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 4,
+    "text": "She never blinked once.",
+    "wordCount": 4,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "short"
+  },
+  {
+    "level": 4,
+    "text": "This door was nailed shut.",
+    "wordCount": 5,
+    "firstWord": "this",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 4,
+    "text": "Nobody picked up the phone.",
+    "wordCount": 5,
+    "firstWord": "nobody",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 4,
+    "text": "My voice came from upstairs.",
+    "wordCount": 5,
+    "firstWord": "my",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
     "level": 5,
     "text": "The cashier knew the name.",
     "isVariation": true,
@@ -777,6 +1167,106 @@
     "text": "Shadows move when you blink.",
     "wordCount": 5,
     "firstWord": "shadows",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "Someone has been in my room.",
+    "wordCount": 6,
+    "firstWord": "someone",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "The camera kept focusing on nothing.",
+    "wordCount": 6,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "It answered before I asked.",
+    "wordCount": 5,
+    "firstWord": "it",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "The basement door is warm.",
+    "wordCount": 5,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "My diary has new entries.",
+    "wordCount": 5,
+    "firstWord": "my",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "The neighbor waved from inside.",
+    "wordCount": 5,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "I watched myself leave the house.",
+    "wordCount": 6,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "That number is disconnected now.",
+    "wordCount": 5,
+    "firstWord": "that",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "Every window shows a different night.",
+    "wordCount": 6,
+    "firstWord": "every",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 5,
+    "text": "The door remembers who entered last.",
+    "wordCount": 6,
+    "firstWord": "the",
     "themes": [
       "paranormal"
     ],
@@ -948,6 +1438,106 @@
     "lengthCategory": "long"
   },
   {
+    "level": 6,
+    "text": "The clock struck three and stopped.",
+    "wordCount": 6,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 6,
+    "text": "Someone is sleeping in my bed.",
+    "wordCount": 6,
+    "firstWord": "someone",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 6,
+    "text": "It only moves when you look away.",
+    "wordCount": 7,
+    "firstWord": "it",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 6,
+    "text": "The app opened on its own.",
+    "wordCount": 6,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 6,
+    "text": "Your search history is not yours.",
+    "wordCount": 6,
+    "firstWord": "your",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 6,
+    "text": "She smiled, but her eyes didn't.",
+    "wordCount": 7,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 6,
+    "text": "The fog came in under the door.",
+    "wordCount": 7,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 6,
+    "text": "All the clocks show different times.",
+    "wordCount": 6,
+    "firstWord": "all",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 6,
+    "text": "The voices grew louder after midnight.",
+    "wordCount": 6,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 6,
+    "text": "It has been in the house all week.",
+    "wordCount": 8,
+    "firstWord": "it",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
     "level": 7,
     "text": "There are wet footprints on my ceiling.",
     "wordCount": 7,
@@ -1108,6 +1698,106 @@
     "firstWord": "i",
     "themes": [
       "general"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "My reflection smiled half a second late.",
+    "wordCount": 7,
+    "firstWord": "my",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "The lights downstairs turned on at dawn.",
+    "wordCount": 7,
+    "firstWord": "the",
+    "themes": [
+      "general"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "I found a second door behind the wall.",
+    "wordCount": 8,
+    "firstWord": "i",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "She has been standing there for hours.",
+    "wordCount": 7,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "My heartbeat slowed during the silence.",
+    "wordCount": 6,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 7,
+    "text": "The children's laughter had no source.",
+    "wordCount": 6,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 7,
+    "text": "One chair had been moved to face me.",
+    "wordCount": 8,
+    "firstWord": "one",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "The drive home took seven extra hours.",
+    "wordCount": 7,
+    "firstWord": "the",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 7,
+    "text": "Something wet dripped from the ceiling.",
+    "wordCount": 6,
+    "firstWord": "something",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 7,
+    "text": "The text said, I am already inside.",
+    "wordCount": 7,
+    "firstWord": "the",
+    "themes": [
+      "technology"
     ],
     "lengthCategory": "long"
   },
@@ -1281,6 +1971,106 @@
     "lengthCategory": "long"
   },
   {
+    "level": 8,
+    "text": "The recording captured a voice that wasn't mine.",
+    "wordCount": 8,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 8,
+    "text": "I have no memory of driving home last night.",
+    "wordCount": 9,
+    "firstWord": "i",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 8,
+    "text": "The mirror showed a room I don't have.",
+    "wordCount": 8,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 8,
+    "text": "She said she had been waiting for me.",
+    "wordCount": 8,
+    "firstWord": "she",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 8,
+    "text": "The map had a route I never programmed.",
+    "wordCount": 8,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 8,
+    "text": "Every photo from that trip showed a stranger.",
+    "wordCount": 8,
+    "firstWord": "every",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 8,
+    "text": "My chest felt hollow when they called my name.",
+    "wordCount": 9,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 8,
+    "text": "The child asked where my other self had gone.",
+    "wordCount": 9,
+    "firstWord": "the",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 8,
+    "text": "Something in the crawlspace had learned to knock.",
+    "wordCount": 8,
+    "firstWord": "something",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 8,
+    "text": "My fingerprints were on a door I'd never touched.",
+    "wordCount": 9,
+    "firstWord": "my",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
     "level": 9,
     "text": "I hear the own voice calling from outside the window.",
     "isVariation": true,
@@ -1444,6 +2234,106 @@
       "technology"
     ],
     "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "The journal described events that hadn't happened yet.",
+    "wordCount": 8,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "I deleted the account but messages kept arriving.",
+    "wordCount": 8,
+    "firstWord": "i",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "She memorized my route before we had ever met.",
+    "wordCount": 9,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 9,
+    "text": "The building had a floor that wasn't on any plan.",
+    "wordCount": 10,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "Every version of me had ended the same way.",
+    "wordCount": 9,
+    "firstWord": "every",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 9,
+    "text": "My skin felt wrong in a way I couldn't name.",
+    "wordCount": 10,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "The voice in the recording was reading my thoughts.",
+    "wordCount": 9,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 9,
+    "text": "It had been following the same path I take home.",
+    "wordCount": 10,
+    "firstWord": "it",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "The sensor triggered but nothing crossed the threshold.",
+    "wordCount": 8,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 9,
+    "text": "He spoke in my voice before I said anything.",
+    "wordCount": 9,
+    "firstWord": "he",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
   },
   {
     "level": 10,
@@ -1610,6 +2500,106 @@
     "lengthCategory": "long"
   },
   {
+    "level": 10,
+    "text": "The message was timestamped three days after I died.",
+    "wordCount": 9,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 10,
+    "text": "Every security camera on the street had been turned inward.",
+    "wordCount": 10,
+    "firstWord": "every",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 10,
+    "text": "The doctor said my scans matched someone else's brain.",
+    "wordCount": 9,
+    "firstWord": "the",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 10,
+    "text": "It had been mimicking my handwriting for months without error.",
+    "wordCount": 10,
+    "firstWord": "it",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 10,
+    "text": "The hallway stretched longer each time I walked it.",
+    "wordCount": 9,
+    "firstWord": "the",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 10,
+    "text": "She remembered the accident but said she had not survived.",
+    "wordCount": 10,
+    "firstWord": "she",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 10,
+    "text": "All the witnesses agreed the figure wore my face.",
+    "wordCount": 9,
+    "firstWord": "all",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 10,
+    "text": "My memories of that house belong to someone else now.",
+    "wordCount": 10,
+    "firstWord": "my",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 10,
+    "text": "The network logs showed I had logged in from the grave.",
+    "wordCount": 11,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 10,
+    "text": "The investigation found no explanation for the second heartbeat.",
+    "wordCount": 9,
+    "firstWord": "the",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
     "level": 11,
     "text": "My grocery order arrived with my name on the label but the food inside was already eaten.",
     "wordCount": 17,
@@ -1710,6 +2700,86 @@
     "firstWord": "the",
     "themes": [
       "general"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "I found a name carved beneath the wallpaper — my own.",
+    "wordCount": 11,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "The AI refused to explain why it mentioned my childhood.",
+    "wordCount": 10,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "She stood at the end of the hallway and did not move.",
+    "wordCount": 13,
+    "firstWord": "she",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "The autopsy report listed no cause of death — just the date.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "My reflection has started waking up before I do.",
+    "wordCount": 9,
+    "firstWord": "my",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "medium"
+  },
+  {
+    "level": 11,
+    "text": "The drone footage showed a light in a room I never enter.",
+    "wordCount": 13,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "Something inside my chest began to move during the silence.",
+    "wordCount": 10,
+    "firstWord": "something",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 11,
+    "text": "The photograph was taken from inside the closet while I slept.",
+    "wordCount": 11,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
     ],
     "lengthCategory": "long"
   },
@@ -1819,6 +2889,86 @@
     "lengthCategory": "long"
   },
   {
+    "level": 12,
+    "text": "I do not remember writing this, but the handwriting is mine.",
+    "wordCount": 12,
+    "firstWord": "i",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "The voice on the radio called out my name three times.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "Every test came back normal, and no one could explain the screaming.",
+    "wordCount": 12,
+    "firstWord": "every",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "She described the house in detail — she had never visited.",
+    "wordCount": 10,
+    "firstWord": "she",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "The file had been opened the night before I created it.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "I watched the shadow on the wall and tried not to count its fingers.",
+    "wordCount": 14,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "The therapist stopped mid-session and stared at the wall behind me.",
+    "wordCount": 11,
+    "firstWord": "the",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 12,
+    "text": "Every time I blinked, the room had changed — just slightly.",
+    "wordCount": 11,
+    "firstWord": "every",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
     "level": 13,
     "text": "Your search history shows your address, your partner's workplace, and your route home searched repeatedly.",
     "isVariation": true,
@@ -1919,6 +3069,86 @@
     "firstWord": "the",
     "themes": [
       "general"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "The algorithm predicted my fear before I recognized it myself.",
+    "wordCount": 10,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "I found footage of myself standing in a field I have never seen.",
+    "wordCount": 13,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "She said my name like she had been rehearsing it for years.",
+    "wordCount": 13,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "The hospital had no record of my stay, but the scar remained.",
+    "wordCount": 13,
+    "firstWord": "the",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "It used my dead sister's login to send me a message.",
+    "wordCount": 11,
+    "firstWord": "it",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "The crowd parted as I walked through — no one looked up.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "Something in my memory had been replaced — I could feel the seam.",
+    "wordCount": 13,
+    "firstWord": "something",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 13,
+    "text": "The creature under the stairs had learned to copy my breathing.",
+    "wordCount": 11,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
     ],
     "lengthCategory": "long"
   },
@@ -2027,6 +3257,86 @@
     "lengthCategory": "long"
   },
   {
+    "level": 14,
+    "text": "I recognized the figure in my dream — it was wearing my body.",
+    "wordCount": 13,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "The messages from her account continued for six months after her funeral.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "My heartbeat echoed twice in the monitor, and the nurses said nothing.",
+    "wordCount": 12,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "It moved through the walls without sound — always one room behind me.",
+    "wordCount": 13,
+    "firstWord": "it",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "Every name in the obituary matched someone I had met that week.",
+    "wordCount": 13,
+    "firstWord": "every",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "The simulation acknowledged my question but refused to answer it directly.",
+    "wordCount": 11,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "She described the room inside my head with perfect accuracy.",
+    "wordCount": 10,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 14,
+    "text": "The boundary between asleep and awake had stopped being clear.",
+    "wordCount": 10,
+    "firstWord": "the",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
     "level": 15,
     "text": "I have not called my mother in weeks.",
     "wordCount": 8,
@@ -2131,6 +3441,86 @@
     "lengthCategory": "short"
   },
   {
+    "level": 15,
+    "text": "The scan detected a second skeleton inside the first — both mine.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "Every door in the facility led back to the same empty room.",
+    "wordCount": 13,
+    "firstWord": "every",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "The system had been logging my thoughts as search queries.",
+    "wordCount": 10,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "I recognized the grave before I read the name carved into the stone.",
+    "wordCount": 13,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "It had studied my patterns long enough to predict my next move.",
+    "wordCount": 12,
+    "firstWord": "it",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "The researcher vanished after noting that the subject had begun to notice.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "She remembered every version of the night, including the one I had not told anyone.",
+    "wordCount": 15,
+    "firstWord": "she",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 15,
+    "text": "My pulse spiked on the monitor before the door was opened.",
+    "wordCount": 11,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
     "level": 16,
     "text": "The other version of me stopped walking and looked up and waved.",
     "wordCount": 12,
@@ -2231,6 +3621,86 @@
     "firstWord": "the",
     "themes": [
       "general"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "The signal was embedded inside a transmission that had been silent for a decade.",
+    "wordCount": 14,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "I had visited the location in my dreams long before the map was drawn.",
+    "wordCount": 14,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "The figure in the corner had been there since before the house was built.",
+    "wordCount": 15,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "She told me the exact words I would say before I thought of them.",
+    "wordCount": 14,
+    "firstWord": "she",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "Every mirror in the house showed the room as it had been before the fire.",
+    "wordCount": 15,
+    "firstWord": "every",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "My body continued the routine after my mind had already stopped cooperating.",
+    "wordCount": 12,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "The device registered fear responses in the room before anyone entered it.",
+    "wordCount": 12,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 16,
+    "text": "The autopsy noted that the subject had died twice, both times on the same morning.",
+    "wordCount": 15,
+    "firstWord": "the",
+    "themes": [
+      "existential"
     ],
     "lengthCategory": "long"
   },
@@ -2339,6 +3809,86 @@
     "lengthCategory": "long"
   },
   {
+    "level": 17,
+    "text": "Each time I returned to the house, one more room had ceased to exist.",
+    "wordCount": 14,
+    "firstWord": "each",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "The model had been trained on memories I had never shared with anyone.",
+    "wordCount": 13,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "It waited in the space between thoughts — patient, quiet, and perfectly still.",
+    "wordCount": 13,
+    "firstWord": "it",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "The coroner remarked that the body showed no signs of ever having been alive.",
+    "wordCount": 14,
+    "firstWord": "the",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "My name appeared in the margins of books printed before I was born.",
+    "wordCount": 13,
+    "firstWord": "my",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "The nurse checked my vitals and then quietly left without writing anything down.",
+    "wordCount": 13,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "The recording cut out exactly when she began to describe what had followed her home.",
+    "wordCount": 15,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 17,
+    "text": "I cannot find the part of myself that existed before that night.",
+    "wordCount": 13,
+    "firstWord": "i",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
     "level": 18,
     "text": "I have never been prescribed any medication.",
     "wordCount": 7,
@@ -2441,6 +3991,86 @@
       "general"
     ],
     "lengthCategory": "short"
+  },
+  {
+    "level": 18,
+    "text": "The entity had absorbed enough of my behavior to pass as me in every interaction.",
+    "wordCount": 15,
+    "firstWord": "the",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "I scrolled through my own memories and found several I had no record of living.",
+    "wordCount": 15,
+    "firstWord": "i",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "The data showed my brain activity had flatlined at 3AM, yet I had kept typing.",
+    "wordCount": 15,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "It had been inside the house long enough to learn where I hid from myself.",
+    "wordCount": 15,
+    "firstWord": "it",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "She described my death to me with the calm certainty of someone who had witnessed it.",
+    "wordCount": 16,
+    "firstWord": "she",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "The bones in the wall were arranged in a pattern matching my sleeping position.",
+    "wordCount": 14,
+    "firstWord": "the",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "Every night the same figure stood outside, and every morning I forgot it had been there.",
+    "wordCount": 16,
+    "firstWord": "every",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 18,
+    "text": "The test proved I was real, but the results arrived before the test was given.",
+    "wordCount": 15,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
   },
   {
     "level": 19,
@@ -2548,6 +4178,86 @@
     "lengthCategory": "long"
   },
   {
+    "level": 19,
+    "text": "The archive contained a complete record of my life, authored by something that had watched me since birth.",
+    "wordCount": 17,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "I answered the door and found myself standing there — older, terrified, unable to speak.",
+    "wordCount": 15,
+    "firstWord": "i",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "The neural interface flagged an intrusion, but the access logs showed only my credentials.",
+    "wordCount": 14,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "She said the thing that followed me home was not the first — I was the latest.",
+    "wordCount": 17,
+    "firstWord": "she",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "My body acted independently during the hours I had assumed I was asleep and safe.",
+    "wordCount": 15,
+    "firstWord": "my",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "Every person I had ever loved described the same shadow standing over my shoulder.",
+    "wordCount": 14,
+    "firstWord": "every",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "The last survivor of the facility had filled every wall with one sentence, repeated.",
+    "wordCount": 14,
+    "firstWord": "the",
+    "themes": [
+      "suspense"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 19,
+    "text": "I realized, too late, that the exits had never been exits at all.",
+    "wordCount": 14,
+    "firstWord": "i",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
     "level": 20,
     "text": "I am trapped reading the future of my own death.",
     "wordCount": 10,
@@ -2648,6 +4358,86 @@
     "firstWord": "the",
     "themes": [
       "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "The entity had been building a version of me inside my own mind for years, and it was nearly done.",
+    "wordCount": 20,
+    "firstWord": "the",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "I read the final page of the journal and recognized every word as something I had only ever thought.",
+    "wordCount": 18,
+    "firstWord": "i",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "The simulation had ended three days ago, but nothing in my world had changed to reflect that.",
+    "wordCount": 16,
+    "firstWord": "the",
+    "themes": [
+      "technology"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "She told me the version of myself I believed in had not existed since the incident in the basement.",
+    "wordCount": 18,
+    "firstWord": "she",
+    "themes": [
+      "existential"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "Every scar on my body corresponded to a memory I could no longer find anywhere inside me.",
+    "wordCount": 16,
+    "firstWord": "every",
+    "themes": [
+      "body_horror"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "It had rewritten enough of my thoughts that I could no longer tell which fears were originally mine.",
+    "wordCount": 18,
+    "firstWord": "it",
+    "themes": [
+      "psychological"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "The building stood empty for forty years, yet my handprints were still warm on the walls inside.",
+    "wordCount": 17,
+    "firstWord": "the",
+    "themes": [
+      "paranormal"
+    ],
+    "lengthCategory": "long"
+  },
+  {
+    "level": 20,
+    "text": "I have been trying to leave this place since before I arrived, and the door keeps finding me.",
+    "wordCount": 18,
+    "firstWord": "i",
+    "themes": [
+      "existential"
     ],
     "lengthCategory": "long"
   },

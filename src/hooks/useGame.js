@@ -74,7 +74,8 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
   const lastSentenceTextRef = useRef(null);
   const shieldActiveRef = useRef(false);
   const slowMotionRef = useRef(false);
-  const doublePointsRef = useRef(false);
+  const phantomKeysRef = useRef(false);
+  const phantomKeysTimerRef = useRef(null);
   const isPausedRef = useRef(isPaused);
   const gameStateRef = useRef(gameState);
   const sentencesUsedRef = useRef([]); // Track sentences used in current game
@@ -207,7 +208,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         
         // Reset level-based power-ups
         slowMotionRef.current = false;
-        doublePointsRef.current = false;
+        phantomKeysRef.current = false;
         setActivePowerUps(prev => prev.filter(p => p === POWER_UPS.SHIELD));
 
         const sentence = getSentenceForLevel(newLevel, difficulty, sentencePoolRef.current, lastSentenceTextRef.current, wpm, Math.random, null, recentlyUsedSentences, userName);
@@ -253,16 +254,22 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
       } else if (powerUp === POWER_UPS.SLOW_MOTION) {
         slowMotionRef.current = true;
         // Effect lasts for the current level
-      } else if (powerUp === POWER_UPS.DOUBLE_POINTS) {
-        doublePointsRef.current = true;
+      } else if (powerUp === POWER_UPS.PHANTOM_KEYS) {
+        phantomKeysRef.current = true;
+        if (phantomKeysTimerRef.current) clearTimeout(phantomKeysTimerRef.current);
+        phantomKeysTimerRef.current = setTimeout(() => {
+          phantomKeysRef.current = false;
+          phantomKeysTimerRef.current = null;
+          setActivePowerUps(prev => prev.filter(p => p !== POWER_UPS.PHANTOM_KEYS));
+        }, 10000);
       }
     });
-    
+
     // Remove one-time power-ups
-    setActivePowerUps(prev => prev.filter(p => 
-      p === POWER_UPS.SHIELD || 
-      p === POWER_UPS.SLOW_MOTION || 
-      p === POWER_UPS.DOUBLE_POINTS
+    setActivePowerUps(prev => prev.filter(p =>
+      p === POWER_UPS.SHIELD ||
+      p === POWER_UPS.SLOW_MOTION ||
+      p === POWER_UPS.PHANTOM_KEYS
     ));
   }, [activePowerUps, totalMistakes]);
 
@@ -291,10 +298,11 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     lastSentenceTextRef.current = null;
     shieldActiveRef.current = false;
     slowMotionRef.current = false;
-    doublePointsRef.current = false;
+    phantomKeysRef.current = false;
+    if (phantomKeysTimerRef.current) { clearTimeout(phantomKeysTimerRef.current); phantomKeysTimerRef.current = null; }
     setIsStoryComplete(false);
     setGameState('playing');
-    
+
     const sentence = getSentenceForLevel(1, selectedDifficulty, null, null, 0, Math.random, null, recentlyUsedSentences, userName);
     lastSentenceTextRef.current = sentence.text;
     setCurrentSentence(sentence.text);
@@ -412,10 +420,11 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
     lastSentenceTextRef.current = null;
     shieldActiveRef.current = false;
     slowMotionRef.current = false;
-    doublePointsRef.current = false;
+    phantomKeysRef.current = false;
+    if (phantomKeysTimerRef.current) { clearTimeout(phantomKeysTimerRef.current); phantomKeysTimerRef.current = null; }
     setIsStoryComplete(false);
     setGameState('playing');
-    
+
     const firstSentence = sentencePoolRef.current[0];
     setCurrentSentence(firstSentence.text);
     sentencesUsedRef.current = [firstSentence.text]; // Initialize tracking
@@ -467,8 +476,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         setCombo(newCombo);
         setMaxCombo(prev => Math.max(prev, newCombo));
         
-        let multiplier = computeStreakMultiplier(newCombo);
-        if (doublePointsRef.current) multiplier *= 2;
+        const multiplier = computeStreakMultiplier(newCombo);
         setStreakMultiplier(multiplier);
         
         // Track perfect streak (no mistakes this level)
@@ -498,7 +506,7 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         
         // Reset level-based power-ups
         slowMotionRef.current = false;
-        doublePointsRef.current = false;
+        phantomKeysRef.current = false;
         setActivePowerUps(prev => prev.filter(p => p === POWER_UPS.SHIELD));
         
         // Get current WPM for adaptive difficulty
@@ -546,6 +554,12 @@ export function useGame(soundHooks = {}, recentlyUsedSentences = [], userName = 
         }
       }
     } else {
+      // Check for phantom keys power-up (timed typo immunity)
+      if (phantomKeysRef.current) {
+        playKeystroke?.();
+        return;
+      }
+
       // Check for shield power-up
       if (shieldActiveRef.current) {
         shieldActiveRef.current = false;

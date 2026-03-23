@@ -81,7 +81,10 @@ export async function submitScore(userId, userData) {
     
     console.log('📊 Existing level:', existingLevel, 'New level:', level);
     
-    // Only update if new score is higher
+    // Always update lastSeen so leaderboard shows recent activity
+    await setDoc(leaderboardRef, { lastSeen: serverTimestamp() }, { merge: true });
+
+    // Only update score if new score is higher
     if (level > existingLevel) {
       const scoreData = {
         displayName: displayName || 'Anonymous',
@@ -93,10 +96,10 @@ export async function submitScore(userId, userData) {
         userId,
         updatedAt: serverTimestamp(),
       };
-      
+
       console.log('📊 Writing score data:', scoreData);
-      
-      await setDoc(leaderboardRef, scoreData);
+
+      await setDoc(leaderboardRef, scoreData, { merge: true });
       console.log('✅ Score submitted successfully:', level, 'for difficulty:', difficulty);
     } else {
       console.log('⚠️ Score not higher than existing, skipping update');

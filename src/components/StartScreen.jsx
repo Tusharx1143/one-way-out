@@ -7,6 +7,7 @@ import { PracticeMode } from './PracticeMode';
 import { StatsDialog } from './StatsDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { CreditsDialog } from './CreditsDialog';
+import { WhatsNewPanel } from './WhatsNewPanel';
 import { ACHIEVEMENTS } from '../config/achievements';
 import pkg from '../../package.json';
 
@@ -137,6 +138,9 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
           </div>
         </div>
       )}
+
+      {/* What's New panel */}
+      <WhatsNewPanel />
 
       {/* Auth button in top right */}
       <div className="absolute top-4 right-4">
@@ -390,7 +394,7 @@ export function StartScreen({ onStart, onStartDaily, onStartEndless, onStartStor
       )}
 
       <div className="absolute bottom-4 right-4 text-[var(--color-bone)]/20 text-[10px] tracking-widest">
-        v1.0.0
+        v{pkg.version}
       </div>
 
       {/* Leaderboard modal */}
