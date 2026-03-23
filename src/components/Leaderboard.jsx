@@ -3,6 +3,17 @@ import { getLeaderboard, getDailyLeaderboard, getUserProfile } from '../services
 import { getDailyChallengeId } from '../config/dailyChallenge';
 import { StatsDialog } from './StatsDialog';
 
+function timeAgo(timestamp) {
+  if (!timestamp) return null;
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return 'just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  return `${Math.floor(seconds / 604800)}w ago`;
+}
+
 export function Leaderboard({ onClose, currentUserId }) {
   const [tab, setTab] = useState('normal'); // normal, nightmare, daily
   const [timeFilter, setTimeFilter] = useState('global'); // global, daily, weekly, monthly
@@ -200,6 +211,11 @@ export function Leaderboard({ onClose, currentUserId }) {
                       <div className="text-[10px] text-[var(--color-bone)]/30 uppercase tracking-tighter">
                         {score.wpm} WPM • {score.maxCombo || 0} Combo
                       </div>
+                      {score.lastSeen && (
+                        <div className="text-[9px] text-[var(--color-bone)]/20 tracking-tighter">
+                          last seen {timeAgo(score.lastSeen)}
+                        </div>
+                      )}
                     </div>
   
                     {/* Level Visual */}
