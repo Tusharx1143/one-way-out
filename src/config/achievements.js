@@ -291,6 +291,49 @@ export const ACHIEVEMENTS = {
     check: (stats) => stats.totalGames >= 100,
   },
   
+  played150: {
+    id: 'played150',
+    name: 'The Haunted',
+    description: 'Play 150 games',
+    icon: '👻',
+    check: (stats) => stats.totalGames >= 150,
+  },
+  played175: {
+    id: 'played175',
+    name: 'Possessed',
+    description: 'Play 175 games',
+    icon: '🌀',
+    check: (stats) => stats.totalGames >= 175,
+  },
+  played200: {
+    id: 'played200',
+    name: 'Condemned',
+    description: 'Play 200 games',
+    icon: '⛓️',
+    check: (stats) => stats.totalGames >= 200,
+  },
+  played300: {
+    id: 'played300',
+    name: 'Damned',
+    description: 'Play 300 games',
+    icon: '🔥',
+    check: (stats) => stats.totalGames >= 300,
+  },
+  played350: {
+    id: 'played350',
+    name: 'Lost Soul',
+    description: 'Play 350 games',
+    icon: '💀',
+    check: (stats) => stats.totalGames >= 350,
+  },
+  played400: {
+    id: 'played400',
+    name: 'Beyond Death',
+    description: 'Play 400 games',
+    icon: '🩸',
+    check: (stats) => stats.totalGames >= 400,
+  },
+
   // Secret / Easter Egg achievements
   theMatrix: {
     id: 'theMatrix',
