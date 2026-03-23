@@ -112,7 +112,7 @@ export function SettingsDialog({
                     <div className="text-xs font-bold">{theme.name}</div>
                     {!isUnlocked ? (
                       <div className="text-[10px] text-[var(--color-bone)]/60 mt-1 leading-tight">
-                        🔒 {theme.unlockedBy ? ACHIEVEMENTS[theme.unlockedBy]?.description : 'Locked'}
+                        🔒 {theme.lockedMessage || (theme.unlockedBy ? ACHIEVEMENTS[theme.unlockedBy]?.description : 'Locked')}
                       </div>
                     ) : isSelected && (
                       <div className="text-[10px] text-green-400 mt-1">✓ Active</div>

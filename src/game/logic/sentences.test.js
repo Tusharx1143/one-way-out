@@ -21,7 +21,7 @@ describe('getSentenceForLevel', () => {
     ];
 
     const rng = () => 0;
-    const picked = getSentenceForLevel(1, 'casual', null, 'SAME', 0, rng, pool);
+    const picked = getSentenceForLevel(1, 'normal', null, 'SAME', 0, rng, pool);
     expect(picked.text).toBe('OTHER');
   });
 
@@ -32,7 +32,7 @@ describe('getSentenceForLevel', () => {
     ];
 
     const rng = () => 0.9999;
-    const picked = getSentenceForLevel(1, 'casual', null, null, 200, rng, pool);
+    const picked = getSentenceForLevel(1, 'normal', null, null, 200, rng, pool);
     expect(picked.text).toBe('L3');
   });
 });

@@ -34,7 +34,7 @@ function loadLocalStats() {
       personalization: {
         useName: true,
         useLocation: true,
-        adaptiveDifficulty: true,
+        adaptiveDifficulty: false,
       },
     },
   };
@@ -83,7 +83,7 @@ export function useStats(user) {
               personalization: {
                 useName: false,
                 useLocation: false,
-                adaptiveDifficulty: true,
+                adaptiveDifficulty: false,
               },
             },
             lastPlayed: Date.now(),
@@ -182,10 +182,10 @@ export function useStats(user) {
       const newHistory = [...(prev.history || []), level].slice(-20);
       updated.history = newHistory;
 
-      // Add to recently used sentences (keep last 15)
+      // Add to recently used sentences (keep last 200 to avoid repeats across ~10 games)
       if (sentencesUsed && sentencesUsed.length > 0) {
         const newRecent = [...(prev.recentlyUsedSentences || []), ...sentencesUsed]
-          .slice(-15);
+          .slice(-200);
         updated.recentlyUsedSentences = newRecent;
       }
 
@@ -331,7 +331,7 @@ export function useStats(user) {
             personalization: {
               useName: false,
               useLocation: false,
-              adaptiveDifficulty: true,
+              adaptiveDifficulty: false,
             },
           }),
           [key]: value,
@@ -352,7 +352,7 @@ export function useStats(user) {
             ...(prev.preferences?.personalization || {
               useName: false,
               useLocation: false,
-              adaptiveDifficulty: true,
+              adaptiveDifficulty: false,
             }),
             [personalizationKey]: value,
           },
